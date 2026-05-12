@@ -19,22 +19,6 @@ export interface Product {
   supplements?: string[]
 }
 
-// Images réellement présentes dans public/ au 2026-05-06 :
-//   public/images/burger.svg
-//   public/images/baguette.svg
-//   public/images/sandwich.svg
-//   public/images/hotdog.svg
-//   public/images/frites.svg
-//   public/images/drink.svg
-//
-// Dossiers prêts pour les vraies images (actuellement vides) :
-//   public/smash/        → ex: Original_Smash_8.50euro.webp
-//   public/baguettes/    → ex: Bavette_10.90euro.png
-//   public/sandwiches/   → ex: Triple_Steak_7.00euro.webp
-//   public/hot-dog/      → ex: Hot_Dog_4.00euro.webp
-//   public/accompagnements/ → ex: Frites_Maison_3.00euro.webp
-//   public/boissons/     → ex: Coca-Cola_33cl_2.50euro.webp
-
 export const products: Product[] = [
   // SMASH BURGERS
   {
@@ -43,7 +27,7 @@ export const products: Product[] = [
     description: "Steak maison 120g, crudités, pickles, cheddar, sauce maison",
     price: 8.50,
     menuPrice: 10.90,
-    image: "/images/burger.svg",
+    image: "/smash/Original_Smash_8.50euro.webp",
     category: "smash-burgers",
     isHalal: true,
     isBestSeller: true,
@@ -54,7 +38,7 @@ export const products: Product[] = [
     description: "Steak maison 120g, pastrami de viande, coleslaw, cheddar, sauce maison",
     price: 9.00,
     menuPrice: 10.90,
-    image: "/images/burger.svg",
+    image: "/smash/Pastrame_Smash_9.00euro.webp",
     category: "smash-burgers",
     isHalal: true,
   },
@@ -64,7 +48,7 @@ export const products: Product[] = [
     description: "Steak maison 120g, bacon, crudités, pickles, oignon caramélisé, cheddar, sauce BBQ creamy",
     price: 9.00,
     menuPrice: 10.90,
-    image: "/images/burger.svg",
+    image: "/smash/Bacon_Smash_9.00euro.webp",
     category: "smash-burgers",
   },
   {
@@ -73,7 +57,7 @@ export const products: Product[] = [
     description: "Steak maison 120g, fromage de chèvre, crudités, pickles, oignon, cheddar, sauce maison",
     price: 9.00,
     menuPrice: 10.90,
-    image: "/images/burger.svg",
+    image: "/smash/Goat_Smash_9.00euro.webp",
     category: "smash-burgers",
     isHalal: true,
   },
@@ -83,7 +67,7 @@ export const products: Product[] = [
     description: "Filet de poulet pané, coleslaw, cheddar, sauce maison",
     price: 8.50,
     menuPrice: 9.00,
-    image: "/images/burger.svg",
+    image: "/smash/Chicn_Smash_8.50euro.webp",
     category: "smash-burgers",
     isHalal: true,
   },
@@ -94,7 +78,7 @@ export const products: Product[] = [
     description: "Émincé de poulet, sauce curry",
     price: 7.40,
     menuPrice: 8.00,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Chicken_Curry_7.40euro.png",
     category: "sandwiches",
     isHalal: true,
   },
@@ -104,7 +88,7 @@ export const products: Product[] = [
     description: "Émincé de poulet mariné tandoori",
     price: 7.40,
     menuPrice: 8.00,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Chicken_Tandoori_7.40euro.png",
     category: "sandwiches",
     isHalal: true,
   },
@@ -114,7 +98,7 @@ export const products: Product[] = [
     description: "3 steaks de bœuf, sauce, crudités",
     price: 7.00,
     menuPrice: 8.00,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Triple_Steak_7.00euro.png",
     category: "sandwiches",
     isHalal: true,
     isBestSeller: true,
@@ -125,7 +109,7 @@ export const products: Product[] = [
     description: "Escalope de poulet, jambon, sauce, fromage",
     price: 7.40,
     menuPrice: 8.00,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Savoureux_7.40euro.png",
     category: "sandwiches",
     isHalal: true,
   },
@@ -135,7 +119,7 @@ export const products: Product[] = [
     description: "Steak + escalope de poulet, jambon",
     price: 8.00,
     menuPrice: 8.90,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Mix_De_Luxe_8.00euro.png",
     category: "sandwiches",
     isHalal: true,
   },
@@ -145,7 +129,7 @@ export const products: Product[] = [
     description: "Steak + cordon bleu, sauce maison",
     price: 8.00,
     menuPrice: 8.90,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Radical_8.00euro.png",
     category: "sandwiches",
     isHalal: true,
   },
@@ -155,7 +139,7 @@ export const products: Product[] = [
     description: "Escalope de poulet, boursin, lardon halal",
     price: 8.00,
     menuPrice: 8.90,
-    image: "/images/sandwich.svg",
+    image: "/sandwiches/Boursin_8.00euro.png",
     category: "sandwiches",
     isHalal: true,
   },
@@ -165,7 +149,7 @@ export const products: Product[] = [
     name: "Hot Dog",
     description: "Saucisse, ketchup, moutarde américaine",
     price: 4.00,
-    image: "/images/hotdog.svg",
+    image: "/hot-dog/Hot_Dog_4.00euro.webp",
     category: "hotdog",
   },
   // BAGUETTES
@@ -175,7 +159,7 @@ export const products: Product[] = [
     description: "Merguez grillée, frites, sauce maison",
     price: 8.50,
     menuPrice: 9.50,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Merguez_Baguette_8.50euro.png",
     category: "baguettes",
     isHalal: true,
   },
@@ -185,7 +169,7 @@ export const products: Product[] = [
     description: "Kefta maison, crudités, sauce maison",
     price: 8.50,
     menuPrice: 9.50,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Kefta_Baguette_8.50euro.png",
     category: "baguettes",
     isHalal: true,
     isBestSeller: true,
@@ -196,7 +180,7 @@ export const products: Product[] = [
     description: "Poivron, boursin, raclette",
     price: 9.00,
     menuPrice: 9.50,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Brochette_Mix_9.00euro.png",
     category: "baguettes",
     supplements: ["Poivron", "Boursin", "Raclette"],
   },
@@ -206,7 +190,7 @@ export const products: Product[] = [
     description: "Viande hachée, oeuf, kiri, frites",
     price: 9.00,
     menuPrice: 9.50,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Bread_Baguette_Kiri_9.00euro.png",
     category: "baguettes",
     isHalal: true,
   },
@@ -215,7 +199,7 @@ export const products: Product[] = [
     name: "Noix De Veau",
     description: "Émincé de veau, poivron mariné",
     price: 10.90,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Noix_De_Veau_10.90euro.png",
     category: "baguettes",
     isHalal: true,
     isBestSeller: true,
@@ -225,7 +209,7 @@ export const products: Product[] = [
     name: "Bavette",
     description: "Émincé de bœuf, poivron mariné",
     price: 10.90,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Bavette_10.90euro.png",
     category: "baguettes",
     isHalal: true,
   },
@@ -235,7 +219,7 @@ export const products: Product[] = [
     description: "Steak, jambon, cheddar",
     price: 9.00,
     menuPrice: 9.50,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Parigo_Baguette_9.00euro.png",
     category: "baguettes",
     isHalal: true,
   },
@@ -244,7 +228,7 @@ export const products: Product[] = [
     name: "Méditerranéen",
     description: "Omelette, frites, fromage",
     price: 8.50,
-    image: "/images/baguette.svg",
+    image: "/baguettes/Mediterraneen_8.50euro.png",
     category: "baguettes",
   },
   // SIDES
@@ -253,7 +237,7 @@ export const products: Product[] = [
     name: "Frites Maison",
     description: "Frites fraîches coupées maison",
     price: 3.00,
-    image: "/images/frites.svg",
+    image: "/accompagnements/Frites_Maison_3.5euros.webp",
     category: "sides",
   },
   {
@@ -261,7 +245,7 @@ export const products: Product[] = [
     name: "Frites Cheddar",
     description: "Frites maison + sauce cheddar",
     price: 4.00,
-    image: "/images/frites.svg",
+    image: "/accompagnements/Frites_Cheddar_4.00euro.webp",
     category: "sides",
   },
   {
@@ -269,24 +253,24 @@ export const products: Product[] = [
     name: "Frites Cheddar Bacon",
     description: "Frites maison + cheddar + bacon",
     price: 4.90,
-    image: "/images/frites.svg",
+    image: "/accompagnements/Frites_Cheddar_Bacon_4.90euro.webp",
     category: "sides",
   },
   // DRINKS
   {
     id: 25,
-    name: "Coca-Cola 33cl",
+    name: "Coca-Cola / Sprite / Fanta",
     description: "Boisson gazeuse 33cl",
     price: 2.50,
-    image: "/images/drink.svg",
+    image: "/boissons/cold_drinks_sprite_cola_fanta.svg",
     category: "drinks",
   },
   {
     id: 26,
-    name: "Eau minérale",
-    description: "50cl",
-    price: 1.50,
-    image: "/images/drink.svg",
+    name: "Red Bull",
+    description: "Boisson énergisante 25cl",
+    price: 2.50,
+    image: "/boissons/redbull.svg",
     category: "drinks",
   },
 ]

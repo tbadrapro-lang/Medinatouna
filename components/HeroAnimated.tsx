@@ -75,7 +75,7 @@ export default function HeroAnimated() {
                   style={{ zIndex: i }}
                 >
                   <Image
-                    src="/images/burger.svg"
+                    src="/smash/Original_Smash_8.50euro.webp"
                     alt="Smash Burger"
                     fill
                     className="object-contain"
@@ -219,7 +219,7 @@ export default function HeroAnimated() {
                   style={{ zIndex: i }}
                 >
                   <Image
-                    src="/images/baguette.svg"
+                    src="/baguettes/Bavette_10.90euro.png"
                     alt="Baguette Bavette"
                     fill
                     className="object-contain"
