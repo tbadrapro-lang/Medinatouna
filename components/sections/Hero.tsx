@@ -4,6 +4,10 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import BlurReveal from '@/components/ui/BlurReveal'
 
+const HERO_IMAGE =
+  process.env.NEXT_PUBLIC_HERO_IMAGE ||
+  'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=1920&auto=format&fit=crop&q=85'
+
 export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null)
   const [particles] = useState(() =>
@@ -32,7 +36,7 @@ export default function Hero() {
         ref={bgRef}
         className="absolute inset-0 -top-[20%] -bottom-[20%]"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=1920&auto=format&fit=crop&q=85')",
+          backgroundImage: `url('${HERO_IMAGE}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           willChange: 'transform',
