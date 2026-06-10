@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=1920&auto=format&fit=crop&q=85'
+const HERO_IMAGE = 'https://ibb.co/d46CdfvB'
 
 const PARTICLES = Array.from({ length: 15 }, (_, i) => ({
   id: i,
