@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { saveLead } from '@/lib/supabase'
+import { useReveal } from '@/hooks/useReveal'
 
 const PACKS = [
   {
@@ -52,6 +53,11 @@ export default function Institut() {
   const [status, setStatus] = useState<Status>('idle')
   const [formule, setFormule] = useState('')
 
+  const header = useReveal<HTMLDivElement>()
+  const packsBlock = useReveal<HTMLDivElement>()
+  const statsBlock = useReveal<HTMLDivElement>()
+  const formBlock = useReveal<HTMLDivElement>()
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus('loading')
@@ -79,13 +85,32 @@ export default function Institut() {
   }
 
   return (
-    <section id="institut" className="relative py-24 px-6 bg-deep">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+    <section id="institut" className="relative py-24 px-6 bg-deep overflow-hidden">
+      {/* Geometric islamic pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23c49a3c' stroke-width='1'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3Ccircle cx='40' cy='40' r='28'/%3E%3C/g%3E%3C/svg%3E\")",
+          backgroundSize: '80px 80px',
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto relative">
+        <div
+          ref={header.ref}
+          className={`text-center mb-16 reveal ${header.isVisible ? 'is-visible' : ''}`}
+        >
           <span className="section-label justify-center">Institut de langue</span>
           <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4">
-            Apprenez l&apos;arabe à Médine
+            Apprenez <em className="italic text-gold">l&apos;arabe</em> à Médine
           </h2>
+          <p className="font-arabic text-xl text-gold/60 mt-6" dir="rtl">
+            طلب العلم فريضة على كل مسلم
+          </p>
+          <p className="font-body text-xs italic text-ivory/35 mt-2">
+            La quête du savoir est une obligation pour tout musulman
+          </p>
           <p className="font-body text-ivory/70 max-w-2xl mx-auto mt-4">
             Un institut agréé, des professeurs natifs et un cadre unique pour progresser
             rapidement tout en vivant une expérience spirituelle inoubliable.
@@ -93,11 +118,16 @@ export default function Institut() {
         </div>
 
         {/* Packs */}
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {PACKS.map((pack) => (
+        <div
+          ref={packsBlock.ref}
+          className={`grid md:grid-cols-3 gap-6 mb-20 reveal ${packsBlock.isVisible ? 'is-visible' : ''}`}
+        >
+          {PACKS.map((pack, i) => (
             <div
               key={pack.name}
-              className={`pack-card p-8 flex flex-col ${pack.featured ? 'featured' : ''}`}
+              className={`pack-card p-8 flex flex-col ${pack.featured ? 'featured' : ''} ${
+                i === 1 ? 'delay-100' : i === 2 ? 'delay-200' : ''
+              }`}
             >
               {pack.featured && (
                 <span className="text-xs uppercase tracking-widest text-gold mb-3">
@@ -126,17 +156,27 @@ export default function Institut() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20 text-center">
+        <div
+          ref={statsBlock.ref}
+          className={`grid grid-cols-2 md:grid-cols-4 gap-6 mb-20 reveal ${statsBlock.isVisible ? 'is-visible' : ''}`}
+        >
           {STATS.map((stat) => (
-            <div key={stat.label}>
-              <p className="font-display text-4xl text-gold font-semibold">{stat.value}</p>
-              <p className="font-body text-sm text-ivory/60 mt-2">{stat.label}</p>
+            <div
+              key={stat.label}
+              className="rounded-xl p-4 text-center bg-forest/40 border border-gold/10"
+            >
+              <p className="font-display text-2xl text-gem font-semibold">{stat.value}</p>
+              <p className="font-body text-xs text-ivory/40 uppercase tracking-widest mt-2">{stat.label}</p>
             </div>
           ))}
         </div>
 
         {/* Form */}
-        <div id="institut-form" className="max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8">
+        <div
+          ref={formBlock.ref}
+          id="institut-form"
+          className={`max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8 reveal ${formBlock.isVisible ? 'is-visible' : ''}`}
+        >
           <h3 className="font-display text-2xl font-semibold mb-6 text-center">
             Demande d&apos;information
           </h3>

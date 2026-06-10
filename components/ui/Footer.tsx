@@ -19,25 +19,48 @@ const LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="relative bg-night px-6 pt-24 pb-10">
-      <div className="max-w-7xl mx-auto">
+    <footer className="relative bg-night px-6 pt-24 pb-10 overflow-hidden">
+      {/* Geometric islamic pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23c49a3c' stroke-width='1'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3Ccircle cx='40' cy='40' r='28'/%3E%3C/g%3E%3C/svg%3E\")",
+          backgroundSize: '80px 80px',
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto relative">
         {/* CTA final */}
-        <div className="text-center mb-20">
-          <p className="font-arabic text-2xl md:text-3xl text-gold mb-4" dir="rtl">
-            مرحبا بكم في المدينة المنورة
+        <div className="text-center mb-16">
+          <p className="font-arabic text-2xl text-gold mb-4" dir="rtl">
+            السلام عليكم
           </p>
           <h2 className="font-display text-4xl md:text-5xl font-semibold mb-8 max-w-2xl mx-auto">
-            Prêt à vivre votre aventure en Arabie ?
+            Prêt à vivre l&apos;Arabie <em className="italic text-gold">autrement</em> ?
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="#institut" className="btn-gold">
               Rejoindre l&apos;institut
             </a>
-            <a href="#camp" className="btn-outline">
-              Réserver le camp
+            <a
+              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20plus%20d%27informations"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline"
+            >
+              WhatsApp direct
             </a>
           </div>
         </div>
+
+        {/* Separator */}
+        <div
+          className="h-px w-full mb-16"
+          style={{
+            background: 'linear-gradient(90deg, transparent, var(--gold), transparent)',
+          }}
+        />
 
         {/* Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 border-t border-white/5 pt-16 pb-10">

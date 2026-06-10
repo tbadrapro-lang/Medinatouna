@@ -107,27 +107,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Sticky sub-tabs */}
-      <div
-        className={`fixed top-[68px] left-0 right-0 z-40 transition-colors duration-300 ${
-          scrolled ? 'bg-[#07110c]/90 backdrop-blur' : 'bg-transparent'
-        } border-b border-white/5 hidden md:block`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex gap-8 font-body text-xs uppercase tracking-widest py-3">
-          {TABS.map((tab) => (
-            <a
-              key={tab.id}
-              href={`#${tab.id}`}
-              className={`transition-colors ${
-                active === tab.id ? 'text-gold' : 'text-ivory/50 hover:text-gold'
-              }`}
-            >
-              {tab.label}
-            </a>
-          ))}
-        </div>
-      </div>
-
       {/* Mobile fullscreen menu */}
       {menuOpen && (
         <div className="fixed inset-0 z-[60] bg-[#07110c] flex flex-col items-center justify-center gap-8">

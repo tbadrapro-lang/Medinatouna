@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { saveLead } from '@/lib/supabase'
+import { useReveal } from '@/hooks/useReveal'
 
 const EBOOKS = [
   {
@@ -48,6 +49,10 @@ export default function Ebooks() {
   const [status, setStatus] = useState<Status>('idle')
   const [filter, setFilter] = useState<Tag>('Tout')
 
+  const ebooksBlock = useReveal<HTMLDivElement>()
+  const leadBlock = useReveal<HTMLDivElement>()
+  const catalogueBlock = useReveal<HTMLDivElement>()
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus('loading')
@@ -87,9 +92,15 @@ export default function Ebooks() {
         </div>
 
         {/* Ebook cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {EBOOKS.map((ebook) => (
-            <div key={ebook.title} className="pack-card overflow-hidden">
+        <div
+          ref={ebooksBlock.ref}
+          className={`grid md:grid-cols-3 gap-6 mb-20 reveal ${ebooksBlock.isVisible ? 'is-visible' : ''}`}
+        >
+          {EBOOKS.map((ebook, i) => (
+            <div
+              key={ebook.title}
+              className={`pack-card overflow-hidden ${i === 1 ? 'delay-100' : i === 2 ? 'delay-200' : ''}`}
+            >
               <div className="h-48 bg-gradient-to-br from-forest to-night flex items-center justify-center">
                 <p className="font-arabic text-3xl text-gold" dir="rtl">
                   {ebook.arabic}
@@ -104,7 +115,10 @@ export default function Ebooks() {
         </div>
 
         {/* Lead magnet */}
-        <div className="max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8 text-center mb-24">
+        <div
+          ref={leadBlock.ref}
+          className={`max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8 text-center mb-24 reveal ${leadBlock.isVisible ? 'is-visible' : ''}`}
+        >
           <h3 className="font-display text-2xl font-semibold mb-2">
             Recevez gratuitement notre guide de bienvenue
           </h3>
@@ -132,7 +146,11 @@ export default function Ebooks() {
         </div>
 
         {/* Catalogue */}
-        <div id="catalogue">
+        <div
+          ref={catalogueBlock.ref}
+          id="catalogue"
+          className={`reveal ${catalogueBlock.isVisible ? 'is-visible' : ''}`}
+        >
           <div className="text-center mb-10">
             <span className="section-label justify-center">Catalogue</span>
             <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4">

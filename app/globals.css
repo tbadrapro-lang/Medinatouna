@@ -67,19 +67,33 @@
 
 .pack-card {
   border-radius: 1.25rem;
-  border: 1px solid rgba(196, 154, 60, 0.12);
-  background: rgba(12, 29, 20, 0.8);
-  transition: border-color 0.3s ease, transform 0.4s ease;
+  border: 1px solid rgba(196, 154, 60, 0.15);
+  background: rgba(12, 29, 20, 0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 30px rgba(4, 13, 8, 0.4), inset 0 1px 0 rgba(196, 154, 60, 0.06);
+  transition: border-color 0.3s ease, transform 0.4s ease, box-shadow 0.3s ease;
 }
 
 .pack-card:hover {
-  border-color: rgba(196, 154, 60, 0.35);
-  transform: translateY(-6px);
+  border-color: rgba(196, 154, 60, 0.4);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(4, 13, 8, 0.5), 0 0 0 1px rgba(196, 154, 60, 0.2);
 }
 
 .pack-card.featured {
-  border: 2px solid var(--gold);
-  box-shadow: 0 0 30px rgba(196, 154, 60, 0.15);
+  border: 1.5px solid rgba(196, 154, 60, 0.6);
+  box-shadow: 0 0 40px rgba(196, 154, 60, 0.12), 0 20px 60px rgba(4, 13, 8, 0.5);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section-label {
@@ -170,6 +184,42 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-700px);
+    opacity: 0;
+  }
+}
+
+@keyframes arabicGlow {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(196, 154, 60, 0.25);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(196, 154, 60, 0.6);
+  }
+}
+
+.particle {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation-name: rise;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

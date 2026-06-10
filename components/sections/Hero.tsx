@@ -1,6 +1,17 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
+
+const HERO_IMAGE = 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=1920&auto=format&fit=crop&q=85'
+
+const PARTICLES = Array.from({ length: 15 }, (_, i) => ({
+  id: i,
+  left: Math.round(Math.random() * 100),
+  size: 2 + Math.round(Math.random() * 2),
+  duration: 8 + Math.round(Math.random() * 6),
+  delay: Math.round(Math.random() * 10),
+}))
 
 export default function Hero() {
   const imgRef = useRef<HTMLDivElement>(null)
@@ -18,7 +29,7 @@ export default function Hero() {
 
     const onScroll = () => {
       if (imgRef.current) {
-        imgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`
+        imgRef.current.style.transform = `translateY(${window.scrollY * 0.35}px)`
       }
     }
     window.addEventListener('scroll', onScroll)
@@ -27,23 +38,84 @@ export default function Hero() {
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden flex items-center">
+      {/* Background image with parallax */}
       <div
         ref={imgRef}
-        className="absolute inset-0 -top-[10%] h-[120%] bg-cover bg-center"
+        className="absolute z-0"
+        style={{
+          inset: '-20%',
+          backgroundAttachment: isMobile ? 'scroll' : undefined,
+        }}
+      >
+        <Image
+          src={HERO_IMAGE}
+          alt="Désert d'Arabie au coucher du soleil"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* Overlay base */}
+      <div className="absolute inset-0 z-[1] bg-void/55" />
+
+      {/* Geometric islamic pattern */}
+      <div
+        className="absolute inset-0 z-[1] opacity-[0.03]"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1564769625673-8df4d9d3d6b1?w=1800&auto=format&fit=crop&q=80')",
-          backgroundAttachment: isMobile ? 'scroll' : 'fixed',
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23f4efe4' stroke-width='1'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3Ccircle cx='40' cy='40' r='28'/%3E%3C/g%3E%3C/svg%3E\")",
+          backgroundSize: '80px 80px',
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#040d08]/70 via-[#07110c]/60 to-[#0c1d14]" />
+
+      {/* Radial vignette */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background:
+            'radial-gradient(circle at center, transparent 35%, var(--void) 100%)',
+          opacity: 0.8,
+        }}
+      />
+
+      {/* Golden glow at bottom */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-1/2 z-[1] pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at bottom, var(--gold) 0%, transparent 70%)',
+          opacity: 0.06,
+        }}
+      />
+
+      {/* Golden particles */}
+      <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+        {PARTICLES.map((p) => (
+          <span
+            key={p.id}
+            className="particle"
+            style={{
+              left: `${p.left}%`,
+              width: p.size,
+              height: p.size,
+              animationDuration: `${p.duration}s`,
+              animationDelay: `${p.delay}s`,
+            }}
+          />
+        ))}
+      </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 w-full">
         <div className="max-w-3xl">
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <span
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/40 text-xs tracking-widest uppercase text-gold"
-              style={{ animation: 'pulse 2.4s ease-in-out infinite' }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs tracking-widest uppercase text-gold backdrop-blur-md border border-gold/30"
+              style={{
+                background: 'rgba(196,154,60,0.08)',
+                boxShadow: '0 0 24px rgba(196,154,60,0.08), inset 0 1px 0 rgba(196,154,60,0.12)',
+                animation: 'pulse 2.4s ease-in-out infinite',
+              }}
             >
               <span className="w-2 h-2 rounded-full bg-gold inline-block" />
               Depuis Médine · 11ᵉ session
@@ -53,12 +125,16 @@ export default function Hero() {
             </span>
           </div>
 
-          <p className="font-arabic text-2xl md:text-3xl text-gold mb-4" dir="rtl">
+          <p
+            className="font-arabic text-2xl md:text-3xl text-gold mb-4"
+            dir="rtl"
+            style={{ animation: 'arabicGlow 3.5s ease-in-out infinite' }}
+          >
             الخطط الرائعة من الجزيرة العربية
           </p>
 
           <h1
-            className="font-display font-semibold leading-[1.05] mb-6"
+            className="font-display font-semibold leading-[1.05] mb-6 text-ivory"
             style={{ fontSize: 'clamp(3rem, 7vw, 6.5rem)' }}
           >
             Vivez l&apos;Arabie{' '}
@@ -75,18 +151,22 @@ export default function Hero() {
           </h1>
 
           <div className="flex items-center gap-4 mb-8">
-            <span className="block w-16 h-px bg-gold" />
+            <span className="block w-[120px] h-px bg-gold" />
             <span className="block w-2.5 h-2.5 bg-gold rotate-45" />
+            <span className="block w-[120px] h-px bg-gold" />
           </div>
 
-          <div className="bg-forest/45 backdrop-blur rounded-2xl border border-white/5 p-6 mb-10 max-w-xl">
+          <div
+            className="backdrop-blur-xl border border-gold/15 rounded-xl mb-10 max-w-xl"
+            style={{ background: 'rgba(12,29,20,0.5)', padding: '1.5rem 2rem' }}
+          >
             <p className="font-body text-ivory/90 leading-relaxed">
               Institut de langue arabe agréé à Médine, camp bédouin dans le désert,
               e-books et adresses confidentielles. Omra incluse, professeurs natifs.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap" style={{ gap: '1rem' }}>
             <a href="#institut" className="btn-gold">
               Découvrir l&apos;institut
             </a>

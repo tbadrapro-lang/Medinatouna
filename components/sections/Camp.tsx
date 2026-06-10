@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { saveLead } from '@/lib/supabase'
+import { useReveal } from '@/hooks/useReveal'
 
 const ACTIVITES = [
   'Balade à dos de chameau',
@@ -38,6 +39,10 @@ type Status = 'idle' | 'loading' | 'ok' | 'err'
 export default function Camp() {
   const [status, setStatus] = useState<Status>('idle')
 
+  const introBlock = useReveal<HTMLDivElement>()
+  const packsBlock = useReveal<HTMLDivElement>()
+  const formBlock = useReveal<HTMLDivElement>()
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus('loading')
@@ -66,7 +71,10 @@ export default function Camp() {
   return (
     <section id="camp" className="relative py-24 px-6 bg-void">
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+        <div
+          ref={introBlock.ref}
+          className={`grid lg:grid-cols-2 gap-12 items-center mb-20 reveal ${introBlock.isVisible ? 'is-visible' : ''}`}
+        >
           <div>
             <span className="section-label">Expérience désert</span>
             <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4 mb-6">
@@ -89,25 +97,35 @@ export default function Camp() {
             </div>
           </div>
 
-          <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/5 bg-forest/40 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3 text-ivory/50">
-              <div
-                className="w-16 h-16 rounded-full border-2 border-gold/40 border-t-gold flex items-center justify-center"
-                style={{ animation: 'spin 3s linear infinite' }}
-              >
-                <span className="w-0 h-0 border-y-8 border-y-transparent border-l-[14px] border-l-gold ml-1" />
+          <div
+            className="relative aspect-video rounded-2xl overflow-hidden border border-gold/15 flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(18,48,30,0.6), rgba(4,13,8,0.8))',
+            }}
+          >
+            <p className="absolute font-arabic text-8xl text-gold opacity-[0.08] select-none">
+              صحراء
+            </p>
+            <div className="relative flex flex-col items-center gap-3 text-ivory/40 z-10">
+              <div className="w-14 h-14 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center">
+                <span className="w-0 h-0 border-y-8 border-y-transparent border-l-[14px] border-l-white ml-1" />
               </div>
-              <p className="text-sm">Vidéo de présentation à venir</p>
+              <p className="text-sm">Vidéo du camp disponible prochainement</p>
             </div>
           </div>
         </div>
 
         {/* Packs */}
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {PACKS.map((pack) => (
+        <div
+          ref={packsBlock.ref}
+          className={`grid md:grid-cols-3 gap-6 mb-20 reveal ${packsBlock.isVisible ? 'is-visible' : ''}`}
+        >
+          {PACKS.map((pack, i) => (
             <div
               key={pack.name}
-              className={`pack-card p-8 flex flex-col ${pack.featured ? 'featured' : ''}`}
+              className={`pack-card p-8 flex flex-col ${pack.featured ? 'featured' : ''} ${
+                i === 1 ? 'delay-100' : i === 2 ? 'delay-200' : ''
+              }`}
             >
               {pack.featured && (
                 <span className="text-xs uppercase tracking-widest text-gold mb-3">
@@ -135,7 +153,11 @@ export default function Camp() {
         </div>
 
         {/* Form */}
-        <div id="camp-form" className="max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8">
+        <div
+          ref={formBlock.ref}
+          id="camp-form"
+          className={`max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8 reveal ${formBlock.isVisible ? 'is-visible' : ''}`}
+        >
           <h3 className="font-display text-2xl font-semibold mb-6 text-center">
             Réserver votre expérience
           </h3>
