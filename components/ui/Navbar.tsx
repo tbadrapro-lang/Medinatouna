@@ -7,7 +7,8 @@ const TABS = [
   { id: 'institut', label: 'Institut' },
   { id: 'camp', label: 'Camp bédouin' },
   { id: 'ebooks', label: 'E-books' },
-  { id: 'catalogue', label: 'Catalogue' },
+  { id: 'transferts', label: 'Transferts' },
+  { id: 'miel-scooter', label: 'Miel & Scooter' },
 ]
 
 export default function Navbar() {
@@ -51,8 +52,25 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-[44px] h-[44px] rounded-full bg-gradient-to-br from-[#12301e] to-[#040d08] border border-[#c49a3c]/40 flex items-center justify-center">
-              <span className="font-arabic text-[#c49a3c] text-xl">ب</span>
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://i.ibb.co/yF2D2PQJ/logo.jpg"
+                alt="Medinatouna"
+                width={44}
+                height={44}
+                className="rounded-full border border-gold/40 object-cover"
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://i.ibb.co/nMPt3MjX/vision2030.png"
+                alt="Vision 2030"
+                width={32}
+                height={32}
+                className="opacity-80 hidden sm:block"
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
             </div>
             <span className="font-display leading-tight">
               <span className="block text-lg font-semibold text-ivory">Les Bons Plans</span>

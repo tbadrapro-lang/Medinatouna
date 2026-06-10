@@ -1,52 +1,79 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 
+// Pour déposer vos PDFs : uploadez vos fichiers dans /public/ebooks/ sur GitHub.
+// Ex: /public/ebooks/arabe-30-jours.pdf
 const EBOOKS = [
   {
     title: 'Les 100 phrases essentielles',
     arabic: 'مائة جملة أساسية',
     desc: 'Pour communiquer dès votre arrivée en Arabie.',
+    pages: '42 pages',
+    price: '9€',
+    file: '/ebooks/100-phrases-essentielles.pdf',
   },
   {
-    title: 'Guide de l\'Omra sereine',
+    title: "Guide de l'Omra sereine",
     arabic: 'دليل العمرة',
     desc: 'Toutes les étapes de votre Omra expliquées simplement.',
+    pages: '58 pages',
+    price: '12€',
+    file: '/ebooks/guide-omra-sereine.pdf',
   },
   {
     title: 'Adresses confidentielles',
     arabic: 'عناوين خاصة',
     desc: 'Les meilleures adresses locales à Médine et Djeddah.',
+    pages: '30 pages',
+    price: '7€',
+    file: '/ebooks/adresses-confidentielles.pdf',
   },
 ]
 
-const CATALOGUE_TAGS = ['Tout', 'Institut', 'Camp', 'E-books'] as const
-type Tag = (typeof CATALOGUE_TAGS)[number]
-
-const CATALOGUE_ITEMS: { title: string; desc: string; tag: Tag }[] = [
-  {
-    title: 'Session intensive Médine',
-    desc: '1 semaine de cours intensifs avec professeurs natifs.',
-    tag: 'Institut',
-  },
-  {
-    title: 'Nuit dans le désert',
-    desc: 'Camp bédouin premium avec dîner et spectacle.',
-    tag: 'Camp',
-  },
-  {
-    title: 'Pack e-books complet',
-    desc: 'Les 3 e-books pour préparer votre voyage.',
-    tag: 'E-books',
-  },
-]
+const PAYPAL_LINK = 'https://www.paypal.com/paypalme/REMPLACER_PAR_PAYPAL_DU_CLIENT'
 
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
+function EbookModal({ ebook, onClose }: { ebook: (typeof EBOOKS)[number]; onClose: () => void }) {
+  const waText = encodeURIComponent(`Bonjour, je souhaite acheter l'e-book "${ebook.title}" (${ebook.price})`)
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-night/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-deep border border-gold/20 p-6 md:p-8">
+        <button onClick={onClose} aria-label="Fermer" className="absolute top-4 right-4 text-ivory/60 hover:text-gold transition-colors">
+          <X size={20} />
+        </button>
+        <p className="font-arabic text-2xl text-gold mb-2" dir="rtl">{ebook.arabic}</p>
+        <h3 className="font-display text-2xl font-semibold mb-1">{ebook.title}</h3>
+        <p className="text-sm text-ivory/50 mb-3">{ebook.pages}</p>
+        <p className="font-body text-sm text-ivory/70 mb-4">{ebook.desc}</p>
+        <p className="font-display text-2xl text-gold mb-6">{ebook.price}</p>
+        <div className="space-y-2">
+          <a href={PAYPAL_LINK} target="_blank" rel="noopener noreferrer" className="btn-gold w-full justify-center">
+            Payer par PayPal
+          </a>
+          <a
+            href={`https://wa.me/33764850414?text=${waText}`}
+            target="_blank" rel="noopener noreferrer"
+            className="btn-outline w-full justify-center"
+          >
+            Acheter via WhatsApp
+          </a>
+        </div>
+        <p className="text-xs text-ivory/40 mt-4 text-center">
+          Après paiement, votre e-book vous sera envoyé par email/WhatsApp.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export default function Ebooks() {
   const [status, setStatus] = useState<Status>('idle')
-  const [filter, setFilter] = useState<Tag>('Tout')
+  const [open, setOpen] = useState<number | null>(null)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -54,13 +81,22 @@ export default function Ebooks() {
 
     const form = e.currentTarget
     const data = new FormData(form)
+    const email = String(data.get('email') || '')
 
     const { error } = await saveLead({
-      nom: String(data.get('email') || ''),
-      email: String(data.get('email') || ''),
+      nom: email,
+      email,
       service: 'lead_magnet',
       source: 'ebooks',
     })
+
+    try {
+      await fetch('/api/inscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom: email, email, service: 'lead_magnet' }),
+      })
+    } catch {}
 
     if (error) {
       setStatus('err')
@@ -69,9 +105,6 @@ export default function Ebooks() {
       form.reset()
     }
   }
-
-  const filtered =
-    filter === 'Tout' ? CATALOGUE_ITEMS : CATALOGUE_ITEMS.filter((item) => item.tag === filter)
 
   return (
     <section id="ebooks" className="relative py-24 px-6 bg-deep">
@@ -88,23 +121,32 @@ export default function Ebooks() {
 
         {/* Ebook cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {EBOOKS.map((ebook) => (
-            <div key={ebook.title} className="pack-card overflow-hidden">
+          {EBOOKS.map((ebook, i) => (
+            <div key={ebook.title} className="pack-card overflow-hidden flex flex-col">
               <div className="h-48 bg-gradient-to-br from-forest to-night flex items-center justify-center">
                 <p className="font-arabic text-3xl text-gold" dir="rtl">
                   {ebook.arabic}
                 </p>
               </div>
-              <div className="p-6">
-                <h3 className="font-display text-xl font-semibold mb-2">{ebook.title}</h3>
-                <p className="font-body text-sm text-ivory/70">{ebook.desc}</p>
+              <div className="p-6 flex flex-col flex-1">
+                <h3 className="font-display text-xl font-semibold mb-1">{ebook.title}</h3>
+                <p className="text-xs text-ivory/50 mb-2">{ebook.pages}</p>
+                <p className="font-body text-sm text-ivory/70 mb-4 flex-1">{ebook.desc}</p>
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-xl text-gold">{ebook.price}</span>
+                  <button onClick={() => setOpen(i)} className="btn-outline">
+                    Acheter
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
+        {open !== null && <EbookModal ebook={EBOOKS[open]} onClose={() => setOpen(null)} />}
+
         {/* Lead magnet */}
-        <div className="max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8 text-center mb-24">
+        <div className="max-w-2xl mx-auto bg-forest/30 border border-white/5 rounded-2xl p-8 text-center">
           <h3 className="font-display text-2xl font-semibold mb-2">
             Recevez gratuitement notre guide de bienvenue
           </h3>
@@ -129,78 +171,6 @@ export default function Ebooks() {
           {status === 'err' && (
             <p className="text-sm mt-4 text-red-400">Une erreur est survenue, réessayez.</p>
           )}
-        </div>
-
-        {/* Catalogue */}
-        <div id="catalogue">
-          <div className="text-center mb-10">
-            <span className="section-label justify-center">Catalogue</span>
-            <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4">
-              Toutes nos offres
-            </h2>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-3 mb-10">
-            {CATALOGUE_TAGS.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => setFilter(tag)}
-                className={`text-xs uppercase tracking-widest px-4 py-2 rounded-full border transition-colors ${
-                  filter === tag
-                    ? 'border-gold text-gold bg-gold/10'
-                    : 'border-white/10 text-ivory/60 hover:border-gold/40'
-                }`}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-10">
-            {filtered.map((item) => (
-              <div key={item.title} className="pack-card p-6">
-                <span className="text-xs uppercase tracking-widest text-gold">{item.tag}</span>
-                <h3 className="font-display text-xl font-semibold mt-2 mb-2">{item.title}</h3>
-                <p className="font-body text-sm text-ivory/70">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Bonus cards */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="pack-card p-6 flex items-center justify-between gap-4">
-              <div>
-                <h3 className="font-display text-xl font-semibold mb-2">Miel de Sidr</h3>
-                <p className="font-body text-sm text-ivory/70">
-                  Miel d&apos;Arabie pur, livré directement depuis nos partenaires locaux.
-                </p>
-              </div>
-              <a
-                href="https://wa.me/33764850414?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20le%20miel%20de%20Sidr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline whitespace-nowrap"
-              >
-                WhatsApp
-              </a>
-            </div>
-            <div className="pack-card p-6 flex items-center justify-between gap-4">
-              <div>
-                <h3 className="font-display text-xl font-semibold mb-2">Location E-scooter</h3>
-                <p className="font-body text-sm text-ivory/70">
-                  Déplacez-vous facilement à Médine avec nos e-scooters en location.
-                </p>
-              </div>
-              <a
-                href="https://wa.me/33764850414?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20la%20location%20d%27e-scooter"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline whitespace-nowrap"
-              >
-                WhatsApp
-              </a>
-            </div>
-          </div>
         </div>
       </div>
     </section>

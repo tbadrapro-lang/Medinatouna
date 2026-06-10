@@ -2,9 +2,22 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+const IBB_IMAGE = 'https://i.ibb.co/d46CdfvB/medine-hero.jpg'
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1564769625673-8df4d9d3d6b1?w=1800&auto=format&fit=crop&q=80'
+
 export default function Hero() {
   const imgRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const envImage = process.env.NEXT_PUBLIC_HERO_IMAGE
+  const [bgImage, setBgImage] = useState(envImage || IBB_IMAGE)
+
+  useEffect(() => {
+    if (envImage) return
+    const img = new Image()
+    img.onload = () => setBgImage(IBB_IMAGE)
+    img.onerror = () => setBgImage(FALLBACK_IMAGE)
+    img.src = IBB_IMAGE
+  }, [envImage])
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)
@@ -31,8 +44,7 @@ export default function Hero() {
         ref={imgRef}
         className="absolute inset-0 -top-[10%] h-[120%] bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1564769625673-8df4d9d3d6b1?w=1800&auto=format&fit=crop&q=80')",
+          backgroundImage: `url('${bgImage}')`,
           backgroundAttachment: isMobile ? 'scroll' : 'fixed',
         }}
       />
