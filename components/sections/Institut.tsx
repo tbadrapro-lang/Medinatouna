@@ -1,284 +1,475 @@
 'use client'
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
-import { saveLead } from '@/lib/supabase'
-import BlurReveal from '@/components/ui/BlurReveal'
 
-// CONTENU RÉEL MEDINATOUNA.SHOP
+import { useState, FormEvent } from 'react'
+import { Star, Quote, GraduationCap, FileCheck, MessageCircle, Plane, MessageSquare, ShieldCheck, Clock } from 'lucide-react'
+import { saveLead } from '@/lib/supabase'
+import Carousel from '@/components/ui/Carousel'
+import PaymentModal from '@/components/ui/PaymentModal'
+import FAQAccordion from '@/components/ui/FAQAccordion'
+
 const PACKS = [
   {
-    id: 'ete',
-    badge: '☀️ Spécial Été · Places limitées',
-    title: 'Pack Spécial Été',
-    sub: 'Réservé aux hommes',
-    price: '995 €',
-    period: '/ mois',
-    payment: 'Paiement en 2× sans frais',
+    name: 'Pack Été',
+    price: '995€',
     featured: false,
     items: [
-      { icon: '🌊', title: 'Activités estivales', desc: 'Mer Rouge, excursions Badr & Uhud' },
-      { icon: '🏠', title: 'Hébergement meublé climatisé', desc: 'Confort optimal en plein été' },
-      { icon: '🕋', title: 'Omra complète incluse', desc: 'Guide francophone dédié' },
-      { icon: '📖', title: "Cours d'arabe", desc: '+38h/mois · 12 niveaux' },
+      '2 semaines intensives',
+      'Hébergement inclus',
+      'Cours en petit groupe',
+      'Activités culturelles',
     ],
   },
   {
-    id: 'intensif',
-    badge: '⭐ Le plus choisi',
-    title: 'Langue Arabe Intensif',
-    sub: "Cours d'arabe intensifs · 1 à 3 mois",
-    price: 'À partir de 795 €',
-    period: '/ mois',
-    payment: 'Paiement en 2× sans frais',
+    name: 'Intensif',
+    price: '795€',
     featured: true,
     items: [
-      { icon: '🚀', title: "Cours d'arabe intensifs", desc: '+38h de cours/mois · 12 niveaux' },
-      { icon: '📍', title: 'Appartement meublé', desc: 'À 18 min à pied du Masjid An-Nabawi' },
-      { icon: '🕋', title: 'Omra complète incluse', desc: 'Avec guide francophone' },
-      { icon: '🎓', title: 'Suivi pédagogique', desc: 'Professeurs natifs qualifiés' },
+      '1 semaine intensive',
+      'Professeurs natifs',
+      'Suivi personnalisé',
+      'Certificat de niveau',
     ],
   },
   {
-    id: 'famille',
-    badge: '👑 Premium Famille',
-    title: 'Pack Famille Premium',
-    sub: 'Hébergement privé · Sessions H/F',
-    price: 'À partir de 1 990 €',
-    period: '',
-    payment: 'Paiement en 2× sans frais',
+    name: 'Famille',
+    price: '1990€',
     featured: false,
     items: [
-      { icon: '🏡', title: 'Hébergement privé', desc: 'Wifi fibre optique inclus' },
-      { icon: '📚', title: "Cours d'arabe", desc: 'Adaptés famille · sessions H/F' },
-      { icon: '🕋', title: 'Omra complète incluse', desc: 'Excursions famille à Médine' },
-      { icon: '👨‍👩‍👧', title: 'Activités familiales', desc: 'Programme éducatif et ludique' },
+      '2 semaines pour 2 personnes',
+      'Hébergement familial',
+      'Programme enfants',
+      'Omra incluse',
     ],
   },
 ]
 
-// AVIS RÉELS GOOGLE
+const STATS = [
+  { value: '11', label: 'Sessions organisées' },
+  { value: '450+', label: 'Étudiants formés' },
+  { value: '100%', label: 'Professeurs natifs' },
+  { value: '4.9/5', label: 'Satisfaction' },
+]
+
+const CAROUSEL_IMAGES = [
+  'https://i.ibb.co/jkL1QkT0/img1.jpg',
+  'https://i.ibb.co/xtGyfdg9/img2.jpg',
+  'https://i.ibb.co/3mj6vCBb/img3.jpg',
+  'https://i.ibb.co/Cp9SX0mc/img4.jpg',
+  'https://i.ibb.co/vnVQL9d/img5.jpg',
+  'https://i.ibb.co/TM0Mms4V/img6.jpg',
+  'https://i.ibb.co/SDQkJzpy/img7.jpg',
+  'https://i.ibb.co/ZRLqsJSt/img8.jpg',
+]
+
+const STEPS = [
+  {
+    icon: MessageCircle,
+    title: '1. Prise de contact',
+    text: "Vous nous contactez via le formulaire ou WhatsApp pour échanger sur vos besoins, votre niveau et vos disponibilités.",
+  },
+  {
+    icon: FileCheck,
+    title: '2. Inscription & dossier',
+    text: "Nous validons votre formule, constituons votre dossier et vous accompagnons dans les démarches administratives (visa, justificatifs).",
+  },
+  {
+    icon: Plane,
+    title: '3. Voyage & accueil',
+    text: "À votre arrivée à Médine, notre équipe vous accueille et vous accompagne pour votre installation et votre orientation sur place.",
+  },
+  {
+    icon: GraduationCap,
+    title: '4. Cours & immersion',
+    text: "Vous démarrez vos cours avec des professeurs natifs, dans un cadre structuré sur 12 niveaux, avec un accompagnement humain au quotidien.",
+  },
+]
+
 const AVIS = [
   {
-    name: 'Lucas',
+    name: 'L.',
+    date: '14 avril 2026',
     stars: 5,
-    date: 'il y a un mois',
-    text: "« J'ai passé un mois chez Medinatouna à Médine et mon expérience a été exceptionnelle. L'enseignement est de grande qualité, structuré et adapté au niveau de chacun. »",
+    text: "Une expérience extraordinaire ! L'équipe est très professionnelle et bienveillante, les cours sont de qualité et l'ambiance générale est propice à l'apprentissage. Je recommande vivement.",
   },
   {
-    name: 'Djibrilhamza S.',
+    name: 'D.',
+    date: '2 avril 2026',
     stars: 5,
-    date: 'il y a un mois',
-    text: "« Très bon merkez pour l'apprentissage de la langue arabe. J'étais parti pour rester 1 mois. Ça fait 3 mois que j'y suis et j'espère rester jusqu'en fin d'année. Le prof est super compétent. »",
+    text: "Séjour parfaitement organisé du début à la fin. Les professeurs sont natifs et compétents, le suivi est personnalisé et l'ambiance respectueuse. Une vraie réussite.",
   },
   {
-    name: 'Toufiq',
+    name: 'T.',
+    date: '20 mars 2026',
     stars: 5,
-    date: 'il y a un mois',
-    text: "« Très bon merkez, je recommande. Je n'avais aucune base en arabe et grâce à leur programme j'ai pu apprendre à lire et écrire l'arabe. Première fois pour la Omra, j'ai été très bien accompagné. »",
+    text: "J'ai énormément progressé en arabe en très peu de temps. L'accompagnement humain fait toute la différence, on se sent pris en charge du début à la fin du séjour.",
   },
 ]
 
-// PROCESSUS 4 ÉTAPES (Medinatouna)
-const STEPS = [
-  { n: '1', title: 'Tu choisis ton pack', desc: 'Parcours nos packs et sélectionne celui qui correspond à ton projet : durée, profil, objectifs.' },
-  { n: '2', title: 'Tu réserves en ligne', desc: 'Réservation sécurisée ou via WhatsApp. Réponse sous 24h, accompagnement personnalisé.' },
-  { n: '3', title: 'Tu rejoins le groupe WhatsApp', desc: 'Un groupe dédié te donne toutes les infos : conseils départ, checklist, contacts sur place.' },
-  { n: '4', title: 'Tu arrives à Médine', desc: "On s'occupe de tout : accueil, hébergement, cours, Omra, excursions. Tu profites." },
-]
+type Status = 'idle' | 'loading' | 'ok' | 'err'
 
 export default function Institut() {
-  const [form, setForm] = useState({ nom: '', email: '', whatsapp: '', formule: 'intensif', message: '' })
-  const [status, setStatus] = useState<'idle'|'loading'|'ok'|'err'>('idle')
+  const [imgError, setImgError] = useState(false)
+  const [modalPack, setModalPack] = useState<(typeof PACKS)[number] | null>(null)
 
-  const submit = async (e: React.FormEvent) => {
+  // Multi-step registration form
+  const [step, setStep] = useState(1)
+  const [status, setStatus] = useState<Status>('idle')
+  const [form, setForm] = useState({
+    nom: '', email: '', whatsapp: '', nationalite: '',
+    formule: '', dates: '', duree: '', niveau: '',
+    message: '', accepted: false,
+  })
+
+  const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value
+    setForm((f) => ({ ...f, [k]: value as never }))
+  }
+
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setStatus('loading')
-    const { error } = await saveLead({ ...form, service: 'institut' })
-    setStatus(error ? 'err' : 'ok')
+
+    const message = `Nationalité: ${form.nationalite}\nDates souhaitées: ${form.dates}\nDurée: ${form.duree}\nNiveau d'arabe: ${form.niveau}\nMessage: ${form.message}`
+
+    const { error } = await saveLead({
+      nom: form.nom,
+      email: form.email,
+      whatsapp: form.whatsapp,
+      service: 'institut',
+      formule: form.formule,
+      message,
+      source: 'site',
+    })
+
+    try {
+      await fetch('/api/inscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom: form.nom, email: form.email, service: 'institut', formule: form.formule, whatsapp: form.whatsapp, message }),
+      })
+    } catch {}
+
+    if (error) {
+      setStatus('err')
+    } else {
+      setStatus('ok')
+    }
   }
 
   return (
-    <section id="institut" className="relative py-24 md:py-32 overflow-hidden" style={{background:'linear-gradient(180deg, #0c1d14 0%, #07110c 100%)'}}>
-      {/* Déco rings */}
-      <div className="absolute top-[-8rem] right-[-8rem] w-[36rem] h-[36rem] rounded-full border border-[#c49a3c]/[.06] pointer-events-none" style={{animation:'spin 80s linear infinite'}} />
-      <div className="absolute inset-0 geo-pattern opacity-[0.02] pointer-events-none" />
+    <section id="institut" className="relative py-24 px-6 bg-deep">
+      <div className="max-w-7xl mx-auto">
+        {/* About */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
+          <div className="relative aspect-[4/3] border border-gold/15 overflow-hidden bg-forest/40 order-2 lg:order-1">
+            {imgError ? (
+              <div className="w-full h-full flex items-center justify-center bg-forest/40">
+                <p className="font-arabic text-4xl text-gold" dir="rtl">مدرسة</p>
+              </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src="https://i.ibb.co/jkL1QkT0/institut-facade.jpg"
+                alt="Centre Medinatouna à Médine"
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            )}
+          </div>
 
-      <div className="max-w-7xl mx-auto px-5 md:px-10">
-
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="section-label justify-center mb-4">Institut de langue arabe · Médine</div>
-          <h2 className="font-serif text-[clamp(1.9rem,4.5vw,3.5rem)] font-light text-[#f4efe4] leading-tight mb-4">
-            <BlurReveal text="Apprends l'arabe" delay={0} />
-            <span className="block italic text-[#c49a3c]">
-              <BlurReveal text="au cœur de Médine." delay={0.2} />
-            </span>
-          </h2>
-          <p className="text-[#f4efe4]/55 text-[.9rem] font-light leading-relaxed">
-            Centre agréé par l&apos;État · À 18 min à pied du Masjid an-Nabawi · Note{' '}
-            <span className="text-[#c49a3c] font-medium">5,0/5</span> sur Google
-          </p>
-          {/* Citation arabe */}
-          <div className="mt-5">
-            <p className="arabic-glow text-[#c49a3c]/65 text-lg" style={{fontFamily:'var(--font-noto-arabic)', direction:'rtl'}}>
-              طلب العلم فريضة على كل مسلم
+          <div className="order-1 lg:order-2">
+            <span className="section-label">Institut de langue</span>
+            <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4 mb-2">
+              Centre Medinatouna à Médine
+            </h2>
+            <p className="font-body text-gold mb-6">
+              Centre de langue arabe agréé par l&apos;État saoudien
             </p>
-            <p className="text-[.72rem] italic text-[#f4efe4]/30 mt-1">
-              « La quête du savoir est une obligation pour tout musulman »
+            <p className="font-body text-ivory/70 leading-relaxed mb-4">
+              Medinatouna vous propose un apprentissage de l&apos;arabe selon la méthode égyptienne,
+              reconnue pour son efficacité, structurée en 12 niveaux pédagogiques progressifs allant
+              du débutant complet jusqu&apos;à un niveau avancé de maîtrise.
             </p>
+            <p className="font-body text-ivory/70 leading-relaxed mb-4">
+              Au-delà des cours, notre mission est d&apos;offrir un accompagnement humain complet :
+              de la préparation de votre voyage jusqu&apos;à votre quotidien à Médine, notre équipe
+              est présente à chaque étape pour que vous puissiez vous concentrer sur l&apos;essentiel
+              — votre apprentissage et votre expérience spirituelle.
+            </p>
+            <p className="font-body text-ivory/70 leading-relaxed mb-6">
+              Installé au cœur de la ville du Prophète, notre centre vous offre un cadre serein,
+              respectueux et propice à la concentration, dans une ambiance bienveillante entre
+              étudiants venus du monde entier.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['Centre agréé par l\'État', 'Accompagnement humain', 'Expérience complète', 'Ambiance respectueuse'].map((b) => (
+                <span key={b} className="text-xs uppercase tracking-wider px-3 py-1.5 rounded-full bg-forest/50 border border-white/5 text-ivory/80">
+                  {b}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Stats — mobile scroll horizontal */}
-        <div className="flex overflow-x-auto gap-3 pb-2 mb-12 snap-x snap-mandatory md:grid md:grid-cols-4 md:overflow-visible">
-          {[
-            { v: '+38h', l: 'de cours / mois' },
-            { v: '12', l: 'niveaux pédagogiques' },
-            { v: '18 min', l: 'du Masjid Nabawi' },
-            { v: '5,0/5', l: 'sur Google Maps' },
-          ].map((s, i) => (
-            <div key={i} className="flex-shrink-0 w-[44vw] md:w-auto snap-start text-center p-4 border border-[#c49a3c]/10 bg-[#12301e]/35">
-              <div className="font-serif text-2xl text-[#287a4f] font-semibold">{s.v}</div>
-              <div className="text-[.68rem] text-[#f4efe4]/40 uppercase tracking-widest mt-1">{s.l}</div>
-            </div>
-          ))}
+        {/* Carousel */}
+        <div className="mb-24">
+          <Carousel images={CAROUSEL_IMAGES} caption="Immersion en images · Centre Medinatouna" />
         </div>
 
-        {/* Packs — mobile scroll horizontal */}
-        <div className="flex overflow-x-auto gap-4 pb-3 mb-14 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible">
-          {PACKS.map((p) => (
-            <motion.div
-              key={p.id}
-              whileHover={{ y: -6 }}
-              className={`pack-card flex-shrink-0 w-[85vw] md:w-auto snap-start p-6 flex flex-col ${p.featured ? 'featured' : ''}`}
+        {/* Packs */}
+        <div className="grid md:grid-cols-3 gap-6 mb-20">
+          {PACKS.map((pack) => (
+            <div
+              key={pack.name}
+              className={`pack-card p-8 flex flex-col ${pack.featured ? 'featured' : ''}`}
             >
-              <div className="text-[.68rem] text-[#c49a3c] mb-2 tracking-wide">{p.badge}</div>
-              <h3 className="font-serif text-xl text-[#f4efe4] font-medium mb-1">{p.title}</h3>
-              <p className="text-[.74rem] text-[#f4efe4]/40 mb-4">{p.sub}</p>
-              <div className="mb-1">
-                <span className="font-serif text-2xl text-[#c49a3c] font-semibold">{p.price}</span>
-                {p.period && <span className="text-[.78rem] text-[#f4efe4]/40 ml-1">{p.period}</span>}
-              </div>
-              <p className="text-[.7rem] text-[#c49a3c]/55 mb-5">💳 {p.payment}</p>
-              <ul className="space-y-3 flex-1 mb-6">
-                {p.items.map((item, j) => (
-                  <li key={j} className="flex items-start gap-2.5">
-                    <span className="text-base flex-shrink-0 mt-0.5">{item.icon}</span>
-                    <div>
-                      <span className="text-[.82rem] text-[#f4efe4]/85 font-medium">{item.title}</span>
-                      <span className="text-[.75rem] text-[#f4efe4]/40 block">{item.desc}</span>
-                    </div>
+              {pack.featured && (
+                <span className="text-xs uppercase tracking-widest text-gold mb-3">
+                  Le plus populaire
+                </span>
+              )}
+              <h3 className="font-display text-2xl font-semibold mb-2">{pack.name}</h3>
+              <p className="font-display text-3xl text-gold mb-6">{pack.price}</p>
+              <ul className="space-y-3 mb-8 flex-1">
+                {pack.items.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-ivory/80">
+                    <span className="text-gold mt-1">✓</span>
+                    {item}
                   </li>
                 ))}
               </ul>
               <button
-                onClick={() => setForm(f => ({ ...f, formule: p.id }))}
-                className={`w-full py-3 text-[.85rem] font-medium transition-all flex items-center justify-center gap-2 min-h-[48px] ${
-                  p.featured || form.formule === p.id
-                    ? 'btn-gold'
-                    : 'border border-[#c49a3c]/35 text-[#f4efe4]/70 hover:border-[#c49a3c] hover:text-[#c49a3c]'
-                }`}
+                onClick={() => setModalPack(pack)}
+                className={pack.featured ? 'btn-gold w-full justify-center' : 'btn-outline w-full justify-center'}
               >
-                {form.formule === p.id ? '✓ Sélectionné' : 'Choisir ce pack'}
-                {form.formule !== p.id && <ArrowRight size={14} />}
+                Choisir ce pack
               </button>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        {/* Process 4 étapes */}
-        <div className="max-w-3xl mx-auto mb-16">
-          <h3 className="font-serif text-2xl text-[#f4efe4] text-center mb-8 font-light">Comment ça se passe ?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {STEPS.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex gap-4 p-4 border border-[#c49a3c]/10 bg-[#12301e]/25"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#c49a3c]/15 border border-[#c49a3c]/30 flex items-center justify-center flex-shrink-0 font-serif text-[#c49a3c] font-semibold text-sm">
-                  {s.n}
+        {modalPack && (
+          <PaymentModal
+            title={modalPack.name}
+            price={modalPack.price}
+            whatsappNumber="33764850414"
+            service="institut"
+            onClose={() => setModalPack(null)}
+          />
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24 text-center">
+          {STATS.map((stat) => (
+            <div key={stat.label}>
+              <p className="font-display text-4xl text-gold font-semibold">{stat.value}</p>
+              <p className="font-body text-sm text-ivory/60 mt-2">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Process timeline */}
+        <div className="mb-24">
+          <div className="text-center mb-12">
+            <span className="section-label justify-center">Comment ça marche</span>
+            <h3 className="font-display text-3xl md:text-4xl font-semibold mt-4">
+              Votre parcours, étape par étape
+            </h3>
+          </div>
+          <div className="relative grid md:grid-cols-2 gap-6">
+            {/* mobile connecting line */}
+            <div className="absolute left-4 top-0 bottom-0 w-px bg-gold/20 md:hidden" />
+            {STEPS.map((step, i) => {
+              const Icon = step.icon
+              return (
+                <div
+                  key={step.title}
+                  className={`relative pl-10 md:pl-8 py-6 border-l-2 border-gold overflow-hidden ${i % 2 === 0 ? 'bg-forest/20' : 'bg-forest/5'}`}
+                >
+                  <span
+                    className="absolute -right-4 -top-6 font-display font-bold select-none pointer-events-none"
+                    style={{ fontSize: '6rem', color: 'var(--gold)', opacity: 0.08 }}
+                  >
+                    {i + 1}
+                  </span>
+                  <div className="absolute left-[-1px] top-7 md:static md:mb-3 w-8 h-8 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center -translate-x-1/2 md:translate-x-0">
+                    <Icon size={16} className="text-gold" />
+                  </div>
+                  <h4 className="font-display text-lg font-semibold mb-2 relative">{step.title}</h4>
+                  <p className="font-body text-sm text-ivory/70 leading-relaxed relative">{step.text}</p>
                 </div>
-                <div>
-                  <p className="text-[.85rem] font-medium text-[#f4efe4]/85 mb-1">{s.title}</p>
-                  <p className="text-[.78rem] text-[#f4efe4]/45 leading-relaxed">{s.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
-        {/* Avis Google réels */}
-        <div className="mb-16">
-          <div className="text-center mb-8">
-            <div className="section-label justify-center mb-2">Avis Google vérifiés</div>
-            <p className="text-[#f4efe4]/40 text-sm">Note <span className="text-[#c49a3c]">5,0 / 5</span> ·{' '}
-              <a href="https://maps.app.goo.gl/wy16heEf6eNbzaL17" target="_blank" rel="noopener noreferrer" className="text-[#c49a3c] hover:underline">
-                Voir sur Google Maps →
-              </a>
-            </p>
+        {/* Reviews */}
+        <div className="mb-24">
+          <div className="text-center mb-10">
+            <span className="section-label justify-center">Avis clients</span>
+            <h3 className="font-display text-3xl md:text-4xl font-semibold mt-4">
+              Ils ont vécu l&apos;expérience
+            </h3>
           </div>
-          <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible">
-            {AVIS.map((a, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="pack-card flex-shrink-0 w-[80vw] md:w-auto snap-start p-5"
-              >
-                <div className="text-[#c49a3c] text-sm mb-3">{'★'.repeat(a.stars)}</div>
-                <p className="text-[.83rem] text-[#f4efe4]/75 font-light leading-relaxed italic mb-4">{a.text}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[.78rem] font-medium text-[#f4efe4]/65">{a.name}</span>
-                  <span className="text-[.68rem] text-[#f4efe4]/30">{a.date}</span>
+          <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto snap-x snap-mandatory pb-4 md:pb-0 -mx-1 px-1">
+            {AVIS.map((avis) => (
+              <div key={avis.name + avis.date} className="pack-card p-6 flex-shrink-0 w-[85vw] md:w-auto snap-start flex flex-col">
+                <Quote className="text-gold/30 mb-2" size={28} />
+                <div className="flex gap-1 mb-3">
+                  {Array.from({ length: avis.stars }).map((_, i) => (
+                    <Star key={i} size={14} className="text-gold fill-gold" />
+                  ))}
                 </div>
-              </motion.div>
+                <p className="font-body text-sm text-ivory/80 leading-relaxed mb-4 flex-1">{avis.text}</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center font-display text-gold font-semibold">
+                    {avis.name[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-ivory">{avis.name}</p>
+                    <p className="text-xs text-ivory/50">{avis.date} · Avis Google vérifié</p>
+                  </div>
+                </div>
+              </div>
             ))}
+          </div>
+          <div className="text-center mt-6">
+            <a
+              href="https://www.google.com/maps"
+              target="_blank" rel="noopener noreferrer"
+              className="text-sm text-gold underline underline-offset-4"
+            >
+              Voir tous les avis sur Google Maps
+            </a>
           </div>
         </div>
 
-        {/* Formulaire inscription */}
-        <div className="max-w-lg mx-auto">
-          <div className="border border-[#c49a3c]/[.18] bg-[#07110c]/70 backdrop-blur-sm p-6 md:p-8">
-            <h3 className="font-serif text-xl text-[#c49a3c] mb-5">Demande d&apos;inscription</h3>
+        {/* Registration form */}
+        <div id="institut-form" className="grid lg:grid-cols-2 gap-10 items-start mb-24">
+          <div>
+            <h3 className="font-display text-2xl md:text-3xl font-semibold mb-6">
+              Prêt à vivre l&apos;expérience Medinatouna ?
+            </h3>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3 text-sm text-ivory/80">
+                <Clock size={18} className="text-gold mt-0.5" />
+                Réponse sous 24h
+              </li>
+              <li className="flex items-start gap-3 text-sm text-ivory/80">
+                <ShieldCheck size={18} className="text-gold mt-0.5" />
+                Paiement sécurisé
+              </li>
+              <li className="flex items-start gap-3 text-sm text-ivory/80">
+                <MessageSquare size={18} className="text-gold mt-0.5" />
+                Accompagnement personnalisé
+              </li>
+            </ul>
+            <a
+              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20des%20informations%20sur%20l%27institut"
+              target="_blank" rel="noopener noreferrer"
+              className="btn-outline"
+            >
+              Contacter sur WhatsApp · 33 7 64 85 04 14
+            </a>
+          </div>
+
+          <div className="bg-forest/30 border border-white/5 rounded-2xl p-8">
             {status === 'ok' ? (
               <div className="text-center py-8">
                 <div className="text-4xl mb-3">✅</div>
-                <p className="text-[#f4efe4]/75 font-light">Demande reçue ! Nous vous contactons sous 24h sur WhatsApp.</p>
+                <p className="text-ivory/80 font-body">Merci ! Votre demande a bien été envoyée. Nous revenons vers vous sous 24h.</p>
               </div>
             ) : (
-              <form onSubmit={submit} className="space-y-3">
-                <input className="form-input" placeholder="Votre nom complet *" value={form.nom} onChange={e => setForm(f => ({...f, nom: e.target.value}))} required />
-                <input type="email" className="form-input" placeholder="Email *" value={form.email} onChange={e => setForm(f => ({...f, email: e.target.value}))} required />
-                <input className="form-input" placeholder="WhatsApp (ex: +33...)" value={form.whatsapp} onChange={e => setForm(f => ({...f, whatsapp: e.target.value}))} />
-                <select className="form-input" value={form.formule} onChange={e => setForm(f => ({...f, formule: e.target.value}))}>
-                  <option value="intensif">Langue Arabe Intensif — à partir de 795€/mois</option>
-                  <option value="ete">Pack Spécial Été — 995€/mois</option>
-                  <option value="famille">Pack Famille Premium — à partir de 1990€</option>
-                </select>
-                <textarea className="form-input" placeholder="Message (optionnel)" rows={3} value={form.message} onChange={e => setForm(f => ({...f, message: e.target.value}))} />
-                <p className="text-[.68rem] text-[#f4efe4]/25">En envoyant ce formulaire, vous acceptez d&apos;être recontacté par l&apos;équipe Medinatouna.</p>
-                <div className="flex gap-3 pt-1">
-                  <button type="submit" disabled={status==='loading'} className="btn-gold flex-1">
-                    {status === 'loading' ? 'Envoi...' : 'Envoyer ma demande →'}
-                  </button>
-                  <a href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20m%27inscrire%20%C3%A0%20l%27institut%20Medinatouna"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-4 border border-[#25d366]/35 text-[#4ade80] text-sm hover:bg-[#25d366]/10 transition-all min-h-[48px]">
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                    WA
-                  </a>
+              <>
+                {/* Stepper */}
+                <div className="flex items-center gap-2 mb-8">
+                  {[1, 2, 3].map((s) => (
+                    <div key={s} className="flex-1 flex items-center gap-2">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold border ${step >= s ? 'bg-gold text-deep border-gold' : 'border-white/20 text-ivory/50'}`}>
+                        {s}
+                      </div>
+                      {s < 3 && <div className={`flex-1 h-px ${step > s ? 'bg-gold' : 'bg-white/10'}`} />}
+                    </div>
+                  ))}
                 </div>
-                {status === 'err' && <p className="text-red-400 text-sm">Erreur. Contactez-nous sur WhatsApp.</p>}
-              </form>
+
+                <form onSubmit={handleSubmit} className="grid gap-4">
+                  {step === 1 && (
+                    <>
+                      <p className="text-xs uppercase tracking-widest text-gold mb-1">Étape 1 — Profil</p>
+                      <input className="form-input" placeholder="Nom complet *" value={form.nom} onChange={update('nom')} required />
+                      <input type="email" className="form-input" placeholder="Email *" value={form.email} onChange={update('email')} required />
+                      <input className="form-input" placeholder="WhatsApp *" value={form.whatsapp} onChange={update('whatsapp')} required />
+                      <input className="form-input" placeholder="Nationalité" value={form.nationalite} onChange={update('nationalite')} />
+                      <button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        disabled={!form.nom || !form.email || !form.whatsapp}
+                        className="btn-gold justify-center disabled:opacity-40"
+                      >
+                        Continuer →
+                      </button>
+                    </>
+                  )}
+                  {step === 2 && (
+                    <>
+                      <p className="text-xs uppercase tracking-widest text-gold mb-1">Étape 2 — Pack</p>
+                      <select className="form-input" value={form.formule} onChange={update('formule')}>
+                        <option value="">Choisir une formule</option>
+                        {PACKS.map((pack) => (
+                          <option key={pack.name} value={pack.name}>{pack.name} — {pack.price}</option>
+                        ))}
+                      </select>
+                      <input className="form-input" placeholder="Dates souhaitées" value={form.dates} onChange={update('dates')} />
+                      <input className="form-input" placeholder="Durée du séjour" value={form.duree} onChange={update('duree')} />
+                      <select className="form-input" value={form.niveau} onChange={update('niveau')}>
+                        <option value="">Niveau d&apos;arabe</option>
+                        <option value="Débutant">Débutant</option>
+                        <option value="Intermédiaire">Intermédiaire</option>
+                        <option value="Avancé">Avancé</option>
+                      </select>
+                      <div className="flex gap-3">
+                        <button type="button" onClick={() => setStep(1)} className="btn-outline flex-1 justify-center">Retour</button>
+                        <button type="button" onClick={() => setStep(3)} className="btn-gold flex-1 justify-center">Continuer →</button>
+                      </div>
+                    </>
+                  )}
+                  {step === 3 && (
+                    <>
+                      <p className="text-xs uppercase tracking-widest text-gold mb-1">Étape 3 — Message</p>
+                      <textarea className="form-input resize-none" placeholder="Votre message (optionnel)" rows={4} value={form.message} onChange={update('message')} />
+                      <label className="flex items-start gap-2 text-sm text-ivory/70 font-body">
+                        <input type="checkbox" checked={form.accepted} onChange={update('accepted')} className="mt-1" />
+                        J&apos;ai lu et j&apos;accepte les conditions d&apos;annulation
+                      </label>
+                      <p className="text-xs text-ivory/50 leading-relaxed">
+                        Aucun remboursement ne pourra être effectué. Toutefois, dans certains cas et sous réserve de
+                        disponibilité, un avoir pourra être proposé afin de reporter le séjour sur une autre période.
+                      </p>
+                      <div className="flex gap-3">
+                        <button type="button" onClick={() => setStep(2)} className="btn-outline flex-1 justify-center">Retour</button>
+                        <button type="submit" disabled={!form.accepted || status === 'loading'} className="btn-gold flex-1 justify-center disabled:opacity-40">
+                          {status === 'loading' ? 'Envoi...' : 'Envoyer ma demande'}
+                        </button>
+                      </div>
+                      {status === 'err' && <p className="text-red-400 text-sm text-center">Erreur, contactez-nous sur WhatsApp.</p>}
+                    </>
+                  )}
+                </form>
+              </>
             )}
           </div>
+        </div>
+
+        {/* FAQ */}
+        <div>
+          <div className="text-center mb-10">
+            <span className="section-label justify-center">FAQ</span>
+            <h3 className="font-display text-3xl md:text-4xl font-semibold mt-4">
+              Questions fréquentes
+            </h3>
+          </div>
+          <FAQAccordion />
         </div>
       </div>
     </section>
