@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -52,13 +51,9 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo.jpg"
-              alt="Les Bons Plans d'Arabie"
-              width={44}
-              height={44}
-              className="rounded-full object-cover"
-            />
+            <div className="w-[44px] h-[44px] rounded-full bg-gradient-to-br from-[#12301e] to-[#040d08] border border-[#c49a3c]/40 flex items-center justify-center">
+              <span className="font-arabic text-[#c49a3c] text-xl">ب</span>
+            </div>
             <span className="font-display leading-tight">
               <span className="block text-lg font-semibold text-ivory">Les Bons Plans</span>
               <span className="block text-sm text-gold -mt-1">d&apos;Arabie</span>
