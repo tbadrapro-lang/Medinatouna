@@ -5,7 +5,10 @@ import { Play, Star, Quote } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
-import { CONFIG } from '@/lib/config'
+import { CONFIG, waLink } from '@/lib/config'
+import { track } from '@/lib/track'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const CAMP_IMAGES = [
   'https://i.ibb.co/DHsvdSY2/camp1.jpg',
@@ -78,6 +81,7 @@ export default function Camp() {
   const [status, setStatus] = useState<Status>('idle')
   const [modalPack, setModalPack] = useState<(typeof PACKS)[number] | null>(null)
   const [videoError, setVideoError] = useState(false)
+  const [emailError, setEmailError] = useState(false)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -119,8 +123,9 @@ export default function Camp() {
       setStatus('err')
     } else {
       setStatus('ok')
+      track('form_submitted', { service: 'camp_bedouin' })
       form.reset()
-      window.open(`https://wa.me/${WHATSAPP_CAMP}?text=${encodeURIComponent("Bonjour, je m'appelle [Votre Nom] et je souhaite réserver une expérience au camp bédouin dans le désert de Médine. Pouvez-vous me donner plus d'informations sur les disponibilités et les tarifs ?")}`, '_blank')
+      window.open(waLink(WHATSAPP_CAMP, "Bonjour, je m'appelle [Votre Nom] et je souhaite réserver une expérience au camp bédouin dans le désert de Médine. Pouvez-vous me donner plus d'informations sur les disponibilités et les tarifs ?"), '_blank')
     }
   }
 
@@ -214,7 +219,7 @@ export default function Camp() {
                 ))}
               </ul>
               <button
-                onClick={() => setModalPack(pack)}
+                onClick={() => { track('pack_selected', { pack: pack.name, service: 'camp_bedouin' }); setModalPack(pack) }}
                 className={pack.featured ? 'btn-gold w-full justify-center' : 'btn-outline w-full justify-center'}
               >
                 Choisir ce pack
@@ -285,7 +290,7 @@ export default function Camp() {
               rapidement pour organiser votre expérience.
             </p>
             <a
-              href={`https://wa.me/${WHATSAPP_CAMP}?text=${encodeURIComponent("Bonjour, je m'appelle [Votre Nom] et je souhaite réserver une expérience au camp bédouin dans le désert de Médine. Pouvez-vous me donner plus d'informations sur les disponibilités et les tarifs ?")}`}
+              href={waLink(WHATSAPP_CAMP, "Bonjour, je m'appelle [Votre Nom] et je souhaite réserver une expérience au camp bédouin dans le désert de Médine. Pouvez-vous me donner plus d'informations sur les disponibilités et les tarifs ?")}
               target="_blank" rel="noopener noreferrer"
               className="btn-outline"
             >
@@ -297,9 +302,16 @@ export default function Camp() {
             <form onSubmit={handleSubmit} className="grid gap-4">
               <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
               <input name="nom" required placeholder="Nom complet" className="form-input" />
-              <input name="email" type="email" required placeholder="Email" className="form-input" />
+              <div>
+                <input
+                  name="email" type="email" required placeholder="Email"
+                  className={`form-input ${emailError ? 'border-red-400' : ''}`}
+                  onBlur={(e) => setEmailError(e.target.value.length > 0 && !EMAIL_REGEX.test(e.target.value))}
+                />
+                {emailError && <p className="text-red-400 text-xs mt-1">Veuillez saisir un email valide</p>}
+              </div>
               <input name="whatsapp" placeholder="WhatsApp (optionnel)" className="form-input" />
-              <input name="date_souhait" type="date" className="form-input" />
+              <input name="date_souhait" type="date" min={new Date().toISOString().split('T')[0]} className="form-input" />
               <input name="personnes" placeholder="Nombre de personnes" className="form-input" />
               <select name="formule" className="form-input" defaultValue="">
                 <option value="">Choisir une formule</option>
@@ -321,9 +333,14 @@ export default function Camp() {
                 </p>
               )}
               {status === 'err' && (
-                <p className="text-sm text-center text-red-400">
-                  Une erreur est survenue. Vous pouvez aussi nous contacter directement sur WhatsApp.
-                </p>
+                <div className="text-center space-y-2">
+                  <p className="text-sm text-red-400">
+                    Une erreur est survenue. Contactez-nous directement sur WhatsApp, nous répondons sous 24h.
+                  </p>
+                  <a href={waLink(WHATSAPP_CAMP, "Bonjour, je souhaite réserver une expérience au camp bédouin.")} target="_blank" rel="noopener noreferrer" className="btn-outline w-full justify-center">
+                    Contacter sur WhatsApp
+                  </a>
+                </div>
               )}
             </form>
           </div>

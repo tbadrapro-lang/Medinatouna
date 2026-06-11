@@ -460,10 +460,17 @@ export default function Institut() {
                       <div className="flex gap-3">
                         <button type="button" onClick={() => setStep(2)} className="btn-outline flex-1 justify-center">Retour</button>
                         <button type="submit" disabled={!form.accepted || status === 'loading'} className="btn-gold flex-1 justify-center disabled:opacity-40">
-                          {status === 'loading' ? 'Envoi...' : 'Envoyer ma demande'}
+                          {status === 'loading' ? 'Envoi en cours...' : 'Envoyer ma demande'}
                         </button>
                       </div>
-                      {status === 'err' && <p className="text-red-400 text-sm text-center">Erreur, contactez-nous sur WhatsApp.</p>}
+                      {status === 'err' && (
+                        <div className="text-center space-y-2">
+                          <p className="text-red-400 text-sm">Une erreur est survenue. Contactez-nous directement sur WhatsApp, nous répondons sous 24h.</p>
+                          <a href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite m'inscrire à l'institut Medinatouna.")} target="_blank" rel="noopener noreferrer" className="btn-outline w-full justify-center">
+                            Contacter sur WhatsApp
+                          </a>
+                        </div>
+                      )}
                     </>
                   )}
                 </form>
