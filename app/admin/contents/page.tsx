@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 type Content = {
   id: string
@@ -84,7 +85,7 @@ function ContentsInner() {
 
     const isNew = !('id' in editing) || !editing.id
     const res = await fetch('/api/admin/contents', {
-      method: isNew ? 'POST' : 'PATCH',
+      method: isNew ? 'POST' : 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
@@ -96,17 +97,48 @@ function ContentsInner() {
   }
 
   async function remove(id: string) {
-    if (!confirm('Supprimer ce contenu ?')) return
+    if (!confirm('Désactiver ce contenu ? Il ne sera plus visible sur le site (vous pourrez le réactiver plus tard).')) return
     await fetch(`/api/admin/contents?id=${id}`, { method: 'DELETE' })
     load()
   }
 
   async function toggleActive(item: Content) {
     await fetch('/api/admin/contents', {
-      method: 'PATCH',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: item.id, actif: !item.actif }),
     })
+    load()
+  }
+
+  async function toggleFeatured(item: Content) {
+    await fetch('/api/admin/contents', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: item.id, featured: !item.featured }),
+    })
+    load()
+  }
+
+  async function move(index: number, direction: -1 | 1) {
+    const target = index + direction
+    if (target < 0 || target >= items.length) return
+
+    const a = items[index]
+    const b = items[target]
+
+    await Promise.all([
+      fetch('/api/admin/contents', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: a.id, ordre: b.ordre }),
+      }),
+      fetch('/api/admin/contents', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: b.id, ordre: a.ordre }),
+      }),
+    ])
     load()
   }
 
@@ -165,11 +197,9 @@ function ContentsInner() {
               onChange={(e) => setEditing({ ...editing, badge: e.target.value })}
             />
           </div>
-          <input
-            placeholder="URL de l'image"
-            className="form-input"
-            value={editing.image_url || ''}
-            onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
+          <ImageUpload
+            value={editing.image_url}
+            onChange={(url) => setEditing({ ...editing, image_url: url })}
           />
           <textarea
             placeholder="Inclusions / caractéristiques (une par ligne)"
@@ -218,27 +248,43 @@ function ContentsInner() {
         <p className="text-[#f4efe4]/60">Chargement...</p>
       ) : (
         <div className="grid gap-3">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <div
               key={item.id}
               className="rounded-xl border p-4 flex items-center justify-between gap-4 flex-wrap"
               style={{ background: 'rgba(18, 48, 30, 0.4)', borderColor: 'rgba(196, 154, 60, 0.2)' }}
             >
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <p className="font-semibold">{item.titre}</p>
-                  {item.badge && <span className="text-xs px-2 py-0.5 rounded-full bg-forest/60 border border-gold/20">{item.badge}</span>}
-                  {item.featured && <span className="text-xs px-2 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/30">★ Mis en avant</span>}
-                  {!item.actif && <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30">Inactif</span>}
+              <div className="flex items-center gap-3 min-w-0">
+                {item.image_url && (
+                  <img src={item.image_url} alt={item.titre} className="w-14 h-14 object-cover rounded-lg border border-gold/20 shrink-0" />
+                )}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <p className="font-semibold">{item.titre}</p>
+                    {item.badge && <span className="text-xs px-2 py-0.5 rounded-full bg-forest/60 border border-gold/20">{item.badge}</span>}
+                    {item.featured && <span className="text-xs px-2 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/30">★ Mis en avant</span>}
+                    {!item.actif && <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30">Inactif</span>}
+                  </div>
+                  {item.prix && <p className="text-sm text-gold">{item.prix} {item.ancien_prix && <span className="text-[#f4efe4]/30 line-through ml-1">{item.ancien_prix}</span>}</p>}
                 </div>
-                {item.prix && <p className="text-sm text-gold">{item.prix} {item.ancien_prix && <span className="text-[#f4efe4]/30 line-through ml-1">{item.ancien_prix}</span>}</p>}
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-col">
+                  <button onClick={() => move(index, -1)} disabled={index === 0} className="text-[#f4efe4]/60 hover:text-gold disabled:opacity-20 leading-none px-1">
+                    ↑
+                  </button>
+                  <button onClick={() => move(index, 1)} disabled={index === items.length - 1} className="text-[#f4efe4]/60 hover:text-gold disabled:opacity-20 leading-none px-1">
+                    ↓
+                  </button>
+                </div>
+                <button onClick={() => toggleFeatured(item)} className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${item.featured ? 'bg-gold/20 text-gold border-gold/30' : 'btn-outline'}`}>
+                  ⭐ Featured
+                </button>
                 <button onClick={() => toggleActive(item)} className="btn-outline text-xs">
-                  {item.actif ? 'Désactiver' : 'Activer'}
+                  {item.actif ? '👁️ Désactiver' : '👁️ Activer'}
                 </button>
                 <button onClick={() => startEdit(item)} className="btn-outline text-xs">
-                  Modifier
+                  ✏️ Modifier
                 </button>
                 <button onClick={() => remove(item.id)} className="text-xs px-3 py-1.5 rounded-full border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors">
                   Supprimer

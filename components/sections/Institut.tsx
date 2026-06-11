@@ -11,8 +11,9 @@ import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
 import FAQAccordion from '@/components/ui/FAQAccordion'
 import SafeImage from '@/components/ui/SafeImage'
+import { ContentItem } from '@/lib/data'
 
-const PACKS = [
+const FALLBACK_PACKS = [
   {
     name: 'Pack Été',
     price: '995€',
@@ -112,7 +113,12 @@ const AVIS = [
 
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
-export default function Institut() {
+export default function Institut({ packs }: { packs?: ContentItem[] }) {
+  const PACKS =
+    packs && packs.length > 0
+      ? packs.map((p) => ({ name: p.titre, price: p.prix || '', featured: p.featured, items: p.items || [] }))
+      : FALLBACK_PACKS
+
   const [modalPack, setModalPack] = useState<(typeof PACKS)[number] | null>(null)
 
   // Multi-step registration form

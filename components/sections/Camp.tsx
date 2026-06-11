@@ -7,6 +7,7 @@ import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
 import { CONFIG, waLink } from '@/lib/config'
 import { track } from '@/lib/track'
+import { ContentItem } from '@/lib/data'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -19,7 +20,7 @@ const CAMP_IMAGES = [
   { src: '/camp-mandi-bbq.webp', alt: 'Mandi traditionnel cuit au feu' },
 ]
 
-const PACKS = [
+const FALLBACK_PACKS = [
   {
     name: 'Cavalier',
     price: '50€',
@@ -77,7 +78,12 @@ const WHATSAPP_CAMP = CONFIG.WHATSAPP_PRESTARABIA
 
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
-export default function Camp() {
+export default function Camp({ packs }: { packs?: ContentItem[] }) {
+  const PACKS =
+    packs && packs.length > 0
+      ? packs.map((p) => ({ name: p.titre, price: p.prix || '', featured: p.featured, items: p.items || [] }))
+      : FALLBACK_PACKS
+
   const [status, setStatus] = useState<Status>('idle')
   const [modalPack, setModalPack] = useState<(typeof PACKS)[number] | null>(null)
   const [emailError, setEmailError] = useState(false)

@@ -11,17 +11,26 @@ import Footer from '@/components/ui/Footer'
 import WhatsappFloat from '@/components/ui/WhatsappFloat'
 import LeadMagnetPopup from '@/components/ui/LeadMagnetPopup'
 import StickyCTA from '@/components/ui/StickyCTA'
+import { getContents } from '@/lib/getContents'
 
-export default function Home() {
+export const revalidate = 60
+
+export default async function Home() {
+  const [packsInstitut, packsCamp, ebooks] = await Promise.all([
+    getContents('pack_institut'),
+    getContents('pack_camp'),
+    getContents('ebook'),
+  ])
+
   return (
     <main>
       <ScrollProgress />
       <Navbar />
       <Hero />
       <TrustBar />
-      <Institut />
-      <Camp />
-      <Ebooks />
+      <Institut packs={packsInstitut} />
+      <Camp packs={packsCamp} />
+      <Ebooks ebooks={ebooks} />
       <Transferts />
       <MielScooter />
       <Footer />

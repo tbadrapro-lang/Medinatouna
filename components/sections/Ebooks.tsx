@@ -6,10 +6,11 @@ import { saveLead } from '@/lib/supabase'
 import PaymentModal from '@/components/ui/PaymentModal'
 import { CONFIG, waLink } from '@/lib/config'
 import { track } from '@/lib/track'
+import { ContentItem } from '@/lib/data'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const EBOOKS = [
+const FALLBACK_EBOOKS = [
   {
     id: 'medine',
     badge: 'Disponible',
@@ -113,7 +114,28 @@ function Cover({ id }: { id: string }) {
   )
 }
 
-export default function Ebooks() {
+export default function Ebooks({ ebooks }: { ebooks?: ContentItem[] }) {
+  const EBOOKS =
+    ebooks && ebooks.length > 0
+      ? ebooks.map((e) => {
+          const extra = (e.extra || {}) as Record<string, unknown>
+          return {
+            id: String(extra.id || e.id),
+            badge: e.badge || '',
+            badgeStyle: String(extra.badgeStyle || 'disponible'),
+            title: e.titre,
+            subtitle: e.sous_titre || '',
+            tagline: String(extra.tagline || ''),
+            desc: e.description || '',
+            sommaire: e.items || [],
+            price: e.prix || '',
+            oldPrice: e.ancien_prix || '',
+            available: extra.available !== undefined ? Boolean(extra.available) : true,
+            waitlistService: extra.waitlistService as string | undefined,
+          }
+        })
+      : FALLBACK_EBOOKS
+
   const [openModal, setOpenModal] = useState<(typeof EBOOKS)[number] | null>(null)
   const [showSommaire, setShowSommaire] = useState(false)
   const [waitlistOpen, setWaitlistOpen] = useState<string | null>(null)

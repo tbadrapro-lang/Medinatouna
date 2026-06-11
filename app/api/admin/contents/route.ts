@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
+// Protégé par middleware.ts (toutes les routes /api/admin/*)
+
 export async function GET(req: NextRequest) {
   const type = req.nextUrl.searchParams.get('type')
 
@@ -19,7 +21,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ content: data })
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   const body = await req.json()
   const { id, ...rest } = body
   if (!id) return NextResponse.json({ error: 'id requis' }, { status: 400 })
@@ -35,11 +37,19 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json({ content: data })
 }
 
+// Alias pour compatibilité avec les appels existants
+export const PATCH = PUT
+
 export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id requis' }, { status: 400 })
 
-  const { error } = await supabaseAdmin.from('contents').delete().eq('id', id)
+  // Soft delete : on désactive, on ne supprime jamais vraiment
+  const { error } = await supabaseAdmin
+    .from('contents')
+    .update({ actif: false, updated_at: new Date().toISOString() })
+    .eq('id', id)
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }
