@@ -25,6 +25,7 @@ const notoNaskhArabic = Noto_Naskh_Arabic({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://lesbonsplansdarabie.com'),
   title: "Les Bons Plans d'Arabie — Institut langue arabe, Camp bédouin, Omra Médine",
   description:
     "Institut de langue arabe agréé à Médine, camp bédouin dans le désert, e-books et adresses confidentielles. Omra incluse, professeurs natifs.",
