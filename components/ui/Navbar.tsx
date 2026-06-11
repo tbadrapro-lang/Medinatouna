@@ -53,12 +53,12 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <SafeImage
-                src="https://i.ibb.co/yF2D2PQJ/logo.jpg"
+                src="/images/logo.jpg"
                 alt="Medinatouna"
                 className="w-11 h-11 rounded-full border border-gold/40 object-cover"
               />
               <SafeImage
-                src="https://i.ibb.co/nMPt3MjX/vision2030.png"
+                src="/images/vision2030.png"
                 alt="Vision 2030"
                 className="w-8 h-8 opacity-80 hidden sm:block"
               />
