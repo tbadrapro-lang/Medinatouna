@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 
 const TABS = [
@@ -14,6 +15,7 @@ const TABS = [
 ]
 
 export default function Navbar() {
+  const CONFIG = useConfig()
   const [active, setActive] = useState('institut')
   const [menuOpen, setMenuOpen] = useState(false)
 

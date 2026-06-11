@@ -3,7 +3,8 @@
 import { useState, FormEvent } from 'react'
 import { Star, Quote, GraduationCap, FileCheck, MessageCircle, Plane, MessageSquare, ShieldCheck, Clock } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -114,6 +115,7 @@ const AVIS = [
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
 export default function Institut({ packs }: { packs?: ContentItem[] }) {
+  const CONFIG = useConfig()
   const PACKS =
     packs && packs.length > 0
       ? packs.map((p) => ({ name: p.titre, price: p.prix || '', featured: p.featured, items: p.items || [] }))

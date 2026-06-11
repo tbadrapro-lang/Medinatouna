@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function LeadMagnetPopup() {
+  const CONFIG = useConfig()
   const [visible, setVisible] = useState(false)
   const [email, setEmail] = useState('')
   const [website, setWebsite] = useState('')

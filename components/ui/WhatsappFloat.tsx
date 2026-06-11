@@ -1,9 +1,11 @@
 'use client'
 
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 
 export default function WhatsappFloat() {
+  const CONFIG = useConfig()
   return (
     <a
       href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite obtenir des informations sur vos services (institut de langue, camp bédouin, e-books). Pourriez-vous me contacter ? Merci.")}

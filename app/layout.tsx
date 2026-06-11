@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans, Noto_Naskh_Arabic } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
+import { ConfigProvider } from '@/components/ConfigProvider'
+import { getEffectiveConfig } from '@/lib/getSettings'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -38,17 +40,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const config = await getEffectiveConfig()
   return (
     <html lang="fr">
       <body
         className={`${cormorant.variable} ${dmSans.variable} ${notoNaskhArabic.variable} bg-[#07110c] text-[#f4efe4] antialiased overflow-x-hidden`}
       >
-        {children}
+        <ConfigProvider config={config}>{children}</ConfigProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

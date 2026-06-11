@@ -29,6 +29,10 @@ CREATE TABLE IF NOT EXISTS site_settings (
 -- Storage bucket pour les images (à créer dans l'interface Supabase)
 -- Nom du bucket : site-images, public : true
 
+-- Suivi des relances email
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_email_sent TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS notes TEXT;
+
 ALTER TABLE contents ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "contents_read_public" ON contents FOR SELECT USING (actif = true);
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;

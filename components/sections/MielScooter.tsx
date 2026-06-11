@@ -1,11 +1,12 @@
 'use client'
 
-import { CONFIG, waLink } from '@/lib/config'
-
-const MIEL_WA = waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite commander du miel authentique de Médine. Pouvez-vous m'indiquer les variétés disponibles, les tarifs et les modalités de livraison en France ? Merci.")
-const SCOOTER_WA = waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite réserver un e-scooter à Médine pour mon séjour. Pouvez-vous m'indiquer les dates disponibles et les conditions de location ? Merci.")
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 
 export default function MielScooter() {
+  const CONFIG = useConfig()
+  const MIEL_WA = waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite commander du miel authentique de Médine. Pouvez-vous m'indiquer les variétés disponibles, les tarifs et les modalités de livraison en France ? Merci.")
+  const SCOOTER_WA = waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite réserver un e-scooter à Médine pour mon séjour. Pouvez-vous m'indiquer les dates disponibles et les conditions de location ? Merci.")
   return (
     <section id="miel-scooter" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">
       <div className="max-w-7xl mx-auto">

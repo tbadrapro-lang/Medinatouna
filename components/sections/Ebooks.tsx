@@ -4,7 +4,8 @@ import { useState, FormEvent } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 import PaymentModal from '@/components/ui/PaymentModal'
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 import { ContentItem } from '@/lib/data'
 
@@ -115,6 +116,7 @@ function Cover({ id }: { id: string }) {
 }
 
 export default function Ebooks({ ebooks }: { ebooks?: ContentItem[] }) {
+  const CONFIG = useConfig()
   const EBOOKS =
     ebooks && ebooks.length > 0
       ? ebooks.map((e) => {

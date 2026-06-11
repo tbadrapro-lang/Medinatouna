@@ -5,11 +5,12 @@ import { useEffect, useState } from 'react'
 type Setting = { key: string; value: string }
 
 const KNOWN_KEYS = [
-  { key: 'whatsapp_fr', label: 'Numéro WhatsApp France' },
-  { key: 'whatsapp_prestarabia', label: 'Numéro WhatsApp PrestaArabia' },
+  { key: 'whatsapp_fr', label: 'Numéro WhatsApp principal (ex: 33764850414)' },
+  { key: 'whatsapp_prestarabia', label: 'Numéro WhatsApp PrestaArabia (camp bédouin)' },
   { key: 'email_contact', label: 'Email de contact' },
   { key: 'instagram_url', label: 'Lien Instagram' },
   { key: 'tiktok_url', label: 'Lien TikTok' },
+  { key: 'paypal_url', label: 'Lien PayPal' },
 ]
 
 export default function AdminSettingsPage() {

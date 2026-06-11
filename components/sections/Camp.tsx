@@ -5,7 +5,8 @@ import { Star, Quote } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 import { ContentItem } from '@/lib/data'
 
@@ -74,11 +75,11 @@ const AVIS = [
   },
 ]
 
-const WHATSAPP_CAMP = CONFIG.WHATSAPP_PRESTARABIA
-
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
 export default function Camp({ packs }: { packs?: ContentItem[] }) {
+  const CONFIG = useConfig()
+  const WHATSAPP_CAMP = CONFIG.WHATSAPP_PRESTARABIA
   const PACKS =
     packs && packs.length > 0
       ? packs.map((p) => ({ name: p.titre, price: p.prix || '', featured: p.featured, items: p.items || [] }))

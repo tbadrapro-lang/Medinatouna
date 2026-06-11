@@ -1,8 +1,7 @@
 'use client'
 
-import { CONFIG, waLink } from '@/lib/config'
-
-const WA = waLink(CONFIG.WHATSAPP_PRESTARABIA, "Bonjour, je souhaite réserver un transfert ou un guide à Médine. Pouvez-vous m'indiquer vos disponibilités et vos tarifs ? Merci.")
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 
 const CARDS = [
   {
@@ -35,6 +34,8 @@ const CARDS = [
 ]
 
 export default function Transferts() {
+  const CONFIG = useConfig()
+  const WA = waLink(CONFIG.WHATSAPP_PRESTARABIA, "Bonjour, je souhaite réserver un transfert ou un guide à Médine. Pouvez-vous m'indiquer vos disponibilités et vos tarifs ? Merci.")
   return (
     <section id="transferts" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">
       <div className="max-w-7xl mx-auto">

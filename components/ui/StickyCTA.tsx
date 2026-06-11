@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CONFIG, waLink } from '@/lib/config'
+import { waLink } from '@/lib/config'
+import { useConfig } from '@/components/ConfigProvider'
 import { track } from '@/lib/track'
 
 export default function StickyCTA() {
+  const CONFIG = useConfig()
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
