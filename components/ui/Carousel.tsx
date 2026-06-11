@@ -37,7 +37,9 @@ export default function Carousel({
     const el = scrollerRef.current
     if (!el) return
     const child = el.children[index] as HTMLElement | undefined
-    if (child) child.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+    if (child) {
+      el.scrollTo({ left: child.offsetLeft - el.offsetLeft, behavior: 'smooth' })
+    }
   }, [index])
 
   const goTo = (i: number) => {
