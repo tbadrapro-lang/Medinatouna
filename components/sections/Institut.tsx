@@ -3,6 +3,10 @@
 import { useState, FormEvent } from 'react'
 import { Star, Quote, GraduationCap, FileCheck, MessageCircle, Plane, MessageSquare, ShieldCheck, Clock } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
+import { CONFIG, waLink } from '@/lib/config'
+import { track } from '@/lib/track'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
 import FAQAccordion from '@/components/ui/FAQAccordion'
@@ -119,6 +123,7 @@ export default function Institut() {
     formule: '', dates: '', duree: '', niveau: '',
     message: '', accepted: false, website: '',
   })
+  const [emailError, setEmailError] = useState(false)
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value
@@ -153,6 +158,7 @@ export default function Institut() {
       setStatus('err')
     } else {
       setStatus('ok')
+      track('form_submitted', { service: 'institut' })
     }
   }
 
@@ -232,7 +238,7 @@ export default function Institut() {
                 ))}
               </ul>
               <button
-                onClick={() => setModalPack(pack)}
+                onClick={() => { track('pack_selected', { pack: pack.name, service: 'institut' }); setModalPack(pack) }}
                 className={pack.featured ? 'btn-gold w-full justify-center' : 'btn-outline w-full justify-center'}
               >
                 Choisir ce pack
@@ -245,7 +251,7 @@ export default function Institut() {
           <PaymentModal
             title={modalPack.name}
             price={modalPack.price}
-            whatsappNumber="33764850414"
+            whatsappNumber={CONFIG.WHATSAPP_FR}
             service="institut"
             onClose={() => setModalPack(null)}
           />
@@ -358,7 +364,7 @@ export default function Institut() {
               </li>
             </ul>
             <a
-              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20m%27appelle%20%5BVotre%20Nom%5D%20et%20je%20souhaite%20obtenir%20des%20informations%20sur%20les%20packs%20de%20l%27institut%20Medinatouna%20%C3%A0%20M%C3%A9dine.%20Pourriez-vous%20me%20contacter%20%3F%20Merci."
+              href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je m'appelle [Votre Nom] et je souhaite obtenir des informations sur les packs de l'institut Medinatouna à Médine. Pourriez-vous me contacter ? Merci.")}
               target="_blank" rel="noopener noreferrer"
               className="btn-outline"
             >
@@ -392,7 +398,18 @@ export default function Institut() {
                     <>
                       <p className="text-xs uppercase tracking-widest text-gold mb-1">Étape 1 — Profil</p>
                       <input className="form-input" placeholder="Nom complet *" value={form.nom} onChange={update('nom')} required />
-                      <input type="email" className="form-input" placeholder="Email *" value={form.email} onChange={update('email')} required />
+                      <div>
+                        <input
+                          type="email"
+                          className={`form-input ${emailError ? 'border-red-400' : ''}`}
+                          placeholder="Email *"
+                          value={form.email}
+                          onChange={update('email')}
+                          onBlur={() => setEmailError(form.email.length > 0 && !EMAIL_REGEX.test(form.email))}
+                          required
+                        />
+                        {emailError && <p className="text-red-400 text-xs mt-1">Veuillez saisir un email valide</p>}
+                      </div>
                       <input className="form-input" placeholder="WhatsApp *" value={form.whatsapp} onChange={update('whatsapp')} required />
                       <input className="form-input" placeholder="Nationalité" value={form.nationalite} onChange={update('nationalite')} />
                       <button
@@ -414,7 +431,7 @@ export default function Institut() {
                           <option key={pack.name} value={pack.name}>{pack.name} — {pack.price}</option>
                         ))}
                       </select>
-                      <input className="form-input" placeholder="Dates souhaitées" value={form.dates} onChange={update('dates')} />
+                      <input type="date" className="form-input" placeholder="Dates souhaitées" min={new Date().toISOString().split('T')[0]} value={form.dates} onChange={update('dates')} />
                       <input className="form-input" placeholder="Durée du séjour" value={form.duree} onChange={update('duree')} />
                       <select className="form-input" value={form.niveau} onChange={update('niveau')}>
                         <option value="">Niveau d&apos;arabe</option>

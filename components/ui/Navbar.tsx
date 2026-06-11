@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import SafeImage from './SafeImage'
+import { CONFIG, waLink } from '@/lib/config'
+import { track } from '@/lib/track'
 
 const TABS = [
   { id: 'institut', label: 'Institut' },
@@ -93,9 +95,10 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-4">
             <a
-              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20obtenir%20des%20informations%20sur%20vos%20services%20%28institut%20de%20langue%2C%20camp%20b%C3%A9douin%2C%20e-books%29.%20Pourriez-vous%20me%20contacter%20%3F%20Merci."
+              href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite obtenir des informations sur vos services (institut de langue, camp bédouin, e-books). Pourriez-vous me contacter ? Merci.")}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track('whatsapp_clicked', { source: 'Navbar' })}
               className="flex items-center gap-1.5 text-[#4ade80]"
               style={{ opacity: 0.9 }}
             >
@@ -121,6 +124,7 @@ export default function Navbar() {
             className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg border"
             style={{ background: 'rgba(18,48,30,.6)', borderColor: 'rgba(196,154,60,.2)' }}
             aria-label="Ouvrir le menu"
+            aria-expanded={menuOpen}
             onClick={() => setMenuOpen(true)}
           >
             <div className="flex flex-col gap-1.5">

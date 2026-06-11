@@ -30,3 +30,10 @@ CREATE POLICY "leads_select" ON leads FOR SELECT USING (false);
 
 -- Vue admin (à utiliser avec la service key)
 -- SELECT * FROM leads ORDER BY created_at DESC;
+
+-- Wave 2: CRM enhancements
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'nouveau';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS nb_personnes INTEGER;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS date_arrivee DATE;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS date_depart DATE;
+CREATE INDEX IF NOT EXISTS leads_status_idx ON leads (status);

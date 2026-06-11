@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react'
 import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
+import { CONFIG, waLink } from '@/lib/config'
 
 // Pour déposer vos PDFs : uploadez vos fichiers dans /public/ebooks/ sur GitHub.
 // Ex: /public/ebooks/arabe-30-jours.pdf
@@ -66,14 +67,14 @@ function EbookModal({ ebook, onClose }: { ebook: (typeof EBOOKS)[number]; onClos
             Payer par PayPal
           </a>
           <a
-            href={`https://wa.me/33764850414?text=${waText}`}
+            href={waLink(CONFIG.WHATSAPP_FR, decodeURIComponent(waText))}
             target="_blank" rel="noopener noreferrer"
             className="btn-outline w-full justify-center"
           >
             Acheter via WhatsApp
           </a>
         </div>
-        <p className="text-xs text-ivory/40 mt-4 text-center">
+        <p className="text-xs text-ivory/55 mt-4 text-center">
           Après paiement, votre e-book vous sera envoyé par email/WhatsApp.
         </p>
       </div>

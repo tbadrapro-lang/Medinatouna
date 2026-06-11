@@ -27,7 +27,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+*:focus-visible { outline: 2px solid #c49a3c; outline-offset: 2px; }
 body { background: #07110c; color: #f4efe4; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 ::selection { background: rgba(196,154,60,.3); color: #f4efe4; }
 ::-webkit-scrollbar { width: 3px; }
@@ -165,6 +166,9 @@ body { background: #07110c; color: #f4efe4; -webkit-font-smoothing: antialiased;
   from { text-shadow: 0 0 30px rgba(196,154,60,.4); }
   to { text-shadow: 0 0 60px rgba(196,154,60,.75), 0 0 120px rgba(196,154,60,.2); }
 }
+
+.modal-fade-up { animation: fadeUp 0.3s ease-out; }
+.animate-fade-up { animation: fadeUp 0.3s ease-out; }
 
 .arabic-glow { animation: arabicGlow 4s ease-in-out infinite alternate; }
 .pulse-dot { animation: pulse 2s infinite; }

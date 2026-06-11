@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { CONFIG, waLink } from '@/lib/config'
+import { track } from '@/lib/track'
 
 export default function StickyCTA() {
   const [visible, setVisible] = useState(false)
@@ -31,10 +33,11 @@ export default function StickyCTA() {
           Réserver
         </button>
         <a
-          href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20obtenir%20des%20informations%20sur%20vos%20services%20%28institut%20de%20langue%2C%20camp%20b%C3%A9douin%2C%20e-books%29.%20Pourriez-vous%20me%20contacter%20%3F%20Merci."
+          href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite obtenir des informations sur vos services (institut de langue, camp bédouin, e-books). Pourriez-vous me contacter ? Merci.")}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Contacter sur WhatsApp"
+          onClick={() => track('whatsapp_clicked', { source: 'StickyCTA' })}
           className="flex items-center justify-center bg-[#25d366] rounded-full"
           style={{ width: 48, height: 48, flexShrink: 0 }}
         >

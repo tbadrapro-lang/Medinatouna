@@ -17,6 +17,10 @@ export type Lead = {
   date_souhait?: string
   source?: string
   created_at?: string
+  status?: string
+  nb_personnes?: number
+  date_arrivee?: string
+  date_depart?: string
 }
 
 export async function saveLead(lead: Lead) {

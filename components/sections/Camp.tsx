@@ -5,6 +5,7 @@ import { Play, Star, Quote } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
+import { CONFIG } from '@/lib/config'
 
 const CAMP_IMAGES = [
   'https://i.ibb.co/DHsvdSY2/camp1.jpg',
@@ -69,7 +70,7 @@ const AVIS = [
   },
 ]
 
-const WHATSAPP_CAMP = '966582538386'
+const WHATSAPP_CAMP = CONFIG.WHATSAPP_PRESTARABIA
 
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 

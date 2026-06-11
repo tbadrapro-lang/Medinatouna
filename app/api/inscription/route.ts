@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const HTML_RE = /<[^>]*>/
@@ -42,6 +43,11 @@ function buildHtml(service: string, nom: string, formule?: string, message?: str
       ${message ? `<p style="font-size:13px;color:rgba(244,239,228,0.7);white-space:pre-wrap;border-top:1px solid rgba(196,154,60,0.15);padding-top:12px;margin-top:16px;">${message}</p>` : ''}
       <div style="width:48px;height:2px;background:#c49a3c;margin-top:32px;"></div>
       <p style="font-size:12px;color:rgba(244,239,228,0.5);margin-top:16px;">Medinatouna — Médine, Arabie Saoudite</p>
+      <p style="font-size:11px;color:rgba(244,239,228,0.4);margin-top:24px;border-top:1px solid rgba(196,154,60,0.1);padding-top:12px;">
+        Email envoyé suite à votre demande sur lesbonsplansdarabie.com.<br/>
+        Expéditeur : ${process.env.BREVO_SENDER_EMAIL || 'contact@medinatouna.com'}<br/>
+        Vous ne souhaitez plus recevoir nos emails ? Répondez STOP à cet email.
+      </p>
     </div>
   </div>`
 }
@@ -83,6 +89,24 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Dedup: skip if same email+service already submitted within the last hour
+    try {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+      const { data: existing, error: dupError } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('email', email)
+        .eq('service', service)
+        .gte('created_at', oneHourAgo)
+        .limit(1)
+
+      if (!dupError && existing && existing.length > 0) {
+        return NextResponse.json({ ok: true, duplicate: true })
+      }
+    } catch {
+      // best-effort dedup, ignore failures
+    }
+
     const apiKey = process.env.BREVO_API_KEY
     if (!apiKey) {
       return NextResponse.json({ ok: true })
@@ -90,24 +114,28 @@ export async function POST(req: NextRequest) {
 
     const senderEmail = process.env.BREVO_SENDER_EMAIL || 'contact@medinatouna.com'
 
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'api-key': apiKey,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        sender: { email: senderEmail, name: 'Medinatouna' },
-        to: [{ email }],
-        subject: SUBJECTS[service] || 'Votre demande — Medinatouna',
-        htmlContent: buildHtml(service, nom, formule, message),
-      }),
-    })
+    try {
+      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': apiKey,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          sender: { email: senderEmail, name: 'Medinatouna' },
+          to: [{ email }],
+          subject: SUBJECTS[service] || 'Votre demande — Medinatouna',
+          htmlContent: buildHtml(service, nom, formule, message),
+        }),
+      })
 
-    if (!res.ok) {
-      const text = await res.text()
-      return NextResponse.json({ error: text }, { status: 502 })
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('[BREVO_FAIL]', { email, service, error: text })
+      }
+    } catch (e) {
+      console.error('[BREVO_FAIL]', { email, service, error: String(e) })
     }
 
     return NextResponse.json({ ok: true })
