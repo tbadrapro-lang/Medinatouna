@@ -9,7 +9,7 @@ export default function Carousel({
   caption,
   aspect = 'aspect-[4/3]',
 }: {
-  images: string[]
+  images: { src: string; alt: string }[]
   caption?: string
   aspect?: string
 }) {
@@ -67,9 +67,9 @@ export default function Carousel({
         ref={scrollerRef}
         className="carousel-track flex md:hidden overflow-x-auto snap-x snap-mandatory gap-3 pb-2 -mx-1 px-1"
       >
-        {images.map((src, i) => (
+        {images.map((img, i) => (
           <div key={i} className={`flex-shrink-0 w-[85vw] snap-start ${aspect} border border-gold/15 overflow-hidden bg-forest/40`}>
-            <SafeImage src={src} alt="" className="w-full h-full object-cover" fallbackText="مدينتنا" />
+            <SafeImage src={img.src} alt={img.alt} className="w-full h-full object-cover object-center" fallbackText="مدينتنا" />
           </div>
         ))}
       </div>
@@ -77,7 +77,7 @@ export default function Carousel({
       {/* Desktop: single image with arrows + dots */}
       <div className="hidden md:block">
         <div className={`relative ${aspect} border border-gold/15 overflow-hidden bg-forest/40`}>
-          <SafeImage src={images[index]} alt="" className="w-full h-full object-cover transition-opacity duration-500" fallbackText="مدينتنا" />
+          <SafeImage src={images[index].src} alt={images[index].alt} className="w-full h-full object-cover object-center transition-opacity duration-500" fallbackText="مدينتنا" />
           <button
             onClick={() => { pause(); prev(); resume() }}
             aria-label="Précédent"

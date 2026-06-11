@@ -11,12 +11,12 @@ import { track } from '@/lib/track'
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const CAMP_IMAGES = [
-  'https://i.ibb.co/DHsvdSY2/camp1.jpg',
-  'https://i.ibb.co/B2N5JhP7/camp2.jpg',
-  'https://i.ibb.co/27HQzhqF/camp3.jpg',
-  'https://i.ibb.co/NnjGgdCD/camp4.jpg',
-  'https://i.ibb.co/whnsgWwx/camp5.jpg',
-  'https://i.ibb.co/0ycDNkGc/camp6.jpg',
+  { src: '/images/camp-tente-nuit.webp', alt: 'Tente bédouine traditionnelle de nuit' },
+  { src: '/images/camp-feu-groupe.webp', alt: 'Soirée feu de camp entre frères' },
+  { src: '/images/camp-feu-tente.webp', alt: 'Feu de camp devant la tente bédouine' },
+  { src: '/images/camp-equitation.webp', alt: 'Équitation dans le désert de Médine' },
+  { src: '/images/camp-lait-chamelle.webp', alt: 'Lait de chamelle et thé au feu de bois' },
+  { src: '/images/camp-mandi-bbq.webp', alt: 'Mandi traditionnel cuit au feu' },
 ]
 
 const PACKS = [
