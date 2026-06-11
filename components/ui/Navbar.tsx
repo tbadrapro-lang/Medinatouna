@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import SafeImage from './SafeImage'
 import { CONFIG, waLink } from '@/lib/config'
 import { track } from '@/lib/track'
 
@@ -52,23 +51,19 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 h-[60px] md:h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <div
+              <img
+                src="/logo.jpg"
+                alt="Les Bons Plans d'Arabie"
+                width={44}
+                height={44}
                 style={{
-                  width: 44,
-                  height: 44,
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg,#12301e,#040d08)',
-                  border: '1px solid rgba(196,154,60,.5)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.4rem',
-                  color: '#c49a3c',
+                  objectFit: 'cover',
+                  border: '1px solid rgba(196,154,60,.4)',
+                  boxShadow: '0 0 12px rgba(196,154,60,.2)',
                   flexShrink: 0,
                 }}
-              >
-                ب
-              </div>
+              />
             </div>
             <span className="font-display leading-tight">
               <span className="block text-lg font-semibold text-[#f4efe4]">Les Bons Plans</span>
