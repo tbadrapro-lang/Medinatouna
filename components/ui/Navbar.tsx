@@ -52,16 +52,23 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 h-[60px] md:h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <SafeImage
-                src="/images/logo.jpg"
-                alt="Medinatouna"
-                className="w-11 h-11 rounded-full border border-gold/40 object-cover"
-              />
-              <SafeImage
-                src="/images/vision2030.png"
-                alt="Vision 2030"
-                className="w-8 h-8 opacity-80 hidden sm:block"
-              />
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg,#12301e,#040d08)',
+                  border: '1px solid rgba(196,154,60,.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.4rem',
+                  color: '#c49a3c',
+                  flexShrink: 0,
+                }}
+              >
+                ب
+              </div>
             </div>
             <span className="font-display leading-tight">
               <span className="block text-lg font-semibold text-[#f4efe4]">Les Bons Plans</span>

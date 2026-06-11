@@ -56,14 +56,14 @@ const STATS = [
 ]
 
 const CAROUSEL_IMAGES = [
-  { src: '/images/institut-facade.webp', alt: 'Façade du centre Medinatouna à Médine' },
-  { src: '/images/institut-chambre.webp', alt: "Chambre de l'hébergement Medinatouna" },
-  { src: '/images/medine-mecque.webp', alt: 'Masjid an-Nabawi et la Kaaba' },
-  { src: '/images/omra-pelerins.webp', alt: 'Pèlerins en route pour la Omra' },
-  { src: '/images/quad-desert.webp', alt: 'Sortie quad dans le désert de Médine' },
-  { src: '/images/mer-rouge-bateaux.webp', alt: 'Excursion à la Mer Rouge' },
-  { src: '/images/rais-beach-ponton.webp', alt: 'Rais Beach en Arabie Saoudite' },
-  { src: '/images/badr-vue-aerienne.webp', alt: 'Vue aérienne du site de Badr' },
+  { src: '/institut-facade.webp', alt: 'Façade du centre Medinatouna à Médine' },
+  { src: '/institut-chambre.webp', alt: "Chambre de l'hébergement Medinatouna" },
+  { src: '/medine-mecque.webp', alt: 'Masjid an-Nabawi et la Kaaba' },
+  { src: '/omra-pelerins.webp', alt: 'Pèlerins en route pour la Omra' },
+  { src: '/quad-desert.webp', alt: 'Sortie quad dans le désert de Médine' },
+  { src: '/mer-rouge-bateaux.webp', alt: 'Excursion à la Mer Rouge' },
+  { src: '/rais-beach-ponton.webp', alt: 'Rais Beach en Arabie Saoudite' },
+  { src: '/badr-vue-aerienne.webp', alt: 'Vue aérienne du site de Badr' },
 ]
 
 const STEPS = [
@@ -169,7 +169,7 @@ export default function Institut() {
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
           <div className="relative aspect-[4/3] border border-gold/15 overflow-hidden bg-forest/40 order-2 lg:order-1">
             <SafeImage
-              src="/images/institut-facade.webp"
+              src="/institut-facade.webp"
               alt="Centre Medinatouna à Médine"
               className="w-full h-full object-cover"
               fallbackText="مدرسة"

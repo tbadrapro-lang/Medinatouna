@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const HERO_IMAGE = '/images/hero-masjid-nabawi.jpg'
+const HERO_IMAGE = '/hero-masjid-nabawi.jpg'
 
 export default function Hero() {
   const imgRef = useRef<HTMLDivElement>(null)
