@@ -1,6 +1,6 @@
 'use client'
 
-const WA = 'https://wa.me/33764850414'
+const WA = 'https://wa.me/966582538386?text=Bonjour%2C%20je%20souhaite%20r%C3%A9server%20un%20transfert%20ou%20un%20guide%20%C3%A0%20M%C3%A9dine.%20Pouvez-vous%20m%27indiquer%20vos%20disponibilit%C3%A9s%20et%20vos%20tarifs%20%3F%20Merci.'
 
 const CARDS = [
   {

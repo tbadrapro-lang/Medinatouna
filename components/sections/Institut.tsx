@@ -365,7 +365,7 @@ export default function Institut() {
               </li>
             </ul>
             <a
-              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20des%20informations%20sur%20l%27institut"
+              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20m%27appelle%20%5BVotre%20Nom%5D%20et%20je%20souhaite%20obtenir%20des%20informations%20sur%20les%20packs%20de%20l%27institut%20Medinatouna%20%C3%A0%20M%C3%A9dine.%20Pourriez-vous%20me%20contacter%20%3F%20Merci."
               target="_blank" rel="noopener noreferrer"
               className="btn-outline"
             >

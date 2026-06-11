@@ -38,7 +38,7 @@ const PAYPAL_LINK = 'https://www.paypal.com/paypalme/REMPLACER_PAR_PAYPAL_DU_CLI
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
 function EbookModal({ ebook, onClose }: { ebook: (typeof EBOOKS)[number]; onClose: () => void }) {
-  const waText = encodeURIComponent(`Bonjour, je souhaite acheter l'e-book "${ebook.title}" (${ebook.price})`)
+  const waText = encodeURIComponent(`Bonjour, je souhaite acheter un e-book sur votre site ("${ebook.title}", ${ebook.price}). Pouvez-vous m'indiquer les modalités de paiement et de téléchargement ? Merci.`)
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-night/80 backdrop-blur-sm" onClick={onClose} />

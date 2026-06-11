@@ -1,7 +1,7 @@
 'use client'
 
-const MIEL_WA = 'https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20commander%20du%20miel%20de%20M%C3%A9dine'
-const SCOOTER_WA = 'https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20louer%20un%20e-scooter%20%C3%A0%20M%C3%A9dine'
+const MIEL_WA = 'https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20commander%20du%20miel%20authentique%20de%20M%C3%A9dine.%20Pouvez-vous%20m%27indiquer%20les%20vari%C3%A9t%C3%A9s%20disponibles%2C%20les%20tarifs%20et%20les%20modalit%C3%A9s%20de%20livraison%20en%20France%20%3F%20Merci.'
+const SCOOTER_WA = 'https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20r%C3%A9server%20un%20e-scooter%20%C3%A0%20M%C3%A9dine%20pour%20mon%20s%C3%A9jour.%20Pouvez-vous%20m%27indiquer%20les%20dates%20disponibles%20et%20les%20conditions%20de%20location%20%3F%20Merci.'
 
 export default function MielScooter() {
   return (

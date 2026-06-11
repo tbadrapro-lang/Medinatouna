@@ -118,7 +118,7 @@ export default function Camp() {
     } else {
       setStatus('ok')
       form.reset()
-      window.open(`https://wa.me/${WHATSAPP_CAMP}`, '_blank')
+      window.open(`https://wa.me/${WHATSAPP_CAMP}?text=${encodeURIComponent("Bonjour, je m'appelle [Votre Nom] et je souhaite réserver une expérience au camp bédouin dans le désert de Médine. Pouvez-vous me donner plus d'informations sur les disponibilités et les tarifs ?")}`, '_blank')
     }
   }
 
@@ -283,7 +283,7 @@ export default function Camp() {
               rapidement pour organiser votre expérience.
             </p>
             <a
-              href={`https://wa.me/${WHATSAPP_CAMP}`}
+              href={`https://wa.me/${WHATSAPP_CAMP}?text=${encodeURIComponent("Bonjour, je m'appelle [Votre Nom] et je souhaite réserver une expérience au camp bédouin dans le désert de Médine. Pouvez-vous me donner plus d'informations sur les disponibilités et les tarifs ?")}`}
               target="_blank" rel="noopener noreferrer"
               className="btn-outline"
             >

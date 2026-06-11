@@ -44,7 +44,7 @@ export default function Footer() {
               Rejoindre l&apos;institut
             </a>
             <a
-              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20plus%20d%27informations"
+              href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20obtenir%20des%20informations%20sur%20vos%20services%20%28institut%20de%20langue%2C%20camp%20b%C3%A9douin%2C%20e-books%29.%20Pourriez-vous%20me%20contacter%20%3F%20Merci."
               target="_blank"
               rel="noopener noreferrer"
               className="btn-outline"
