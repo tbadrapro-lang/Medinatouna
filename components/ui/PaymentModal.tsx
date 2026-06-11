@@ -157,9 +157,6 @@ export default function PaymentModal({
             <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-xs text-gold hover:underline inline-block">
               Lire les CGV complètes
             </a>
-            <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-xs text-gold underline underline-offset-4">
-              Lire les CGV complètes
-            </a>
 
             <div className="flex gap-3">
               <button onClick={() => setStep(1)} className="btn-outline flex-1 justify-center">Retour</button>

@@ -4,6 +4,9 @@ import { useState, useEffect, FormEvent } from 'react'
 import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 import { CONFIG, waLink } from '@/lib/config'
+import { track } from '@/lib/track'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // Pour déposer vos PDFs : uploadez vos fichiers dans /public/ebooks/ sur GitHub.
 // Ex: /public/ebooks/arabe-30-jours.pdf
@@ -50,10 +53,18 @@ function EbookModal({ ebook, onClose }: { ebook: (typeof EBOOKS)[number]; onClos
     }
   }, [])
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-4">
       <div className="absolute inset-0 bg-night/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full md:max-w-md max-h-[88vh] overflow-y-auto bg-deep border border-gold/20 rounded-t-2xl md:rounded-none p-6 md:p-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+      <div className="relative w-full md:max-w-md max-h-[88vh] overflow-y-auto bg-deep border border-gold/20 rounded-t-2xl md:rounded-none p-6 md:p-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))] modal-fade-up">
         <button onClick={onClose} aria-label="Fermer" className="absolute top-4 right-4 w-11 h-11 flex items-center justify-center text-ivory/60 hover:text-gold transition-colors">
           <X size={20} />
         </button>
@@ -85,6 +96,7 @@ function EbookModal({ ebook, onClose }: { ebook: (typeof EBOOKS)[number]; onClos
 export default function Ebooks() {
   const [status, setStatus] = useState<Status>('idle')
   const [open, setOpen] = useState<number | null>(null)
+  const [emailError, setEmailError] = useState(false)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -114,6 +126,7 @@ export default function Ebooks() {
       setStatus('err')
     } else {
       setStatus('ok')
+      track('lead_magnet_submitted')
       form.reset()
     }
   }
@@ -165,24 +178,33 @@ export default function Ebooks() {
           <p className="font-body text-sm text-ivory/70 mb-6">
             Inscrivez-vous et recevez immédiatement notre e-book offert par email.
           </p>
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 items-start">
             <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="Votre adresse email"
-              className="form-input flex-1"
-            />
+            <div className="flex-1 w-full">
+              <input
+                name="email"
+                type="email"
+                required
+                placeholder="Votre adresse email"
+                className={`form-input w-full ${emailError ? 'border-red-400' : ''}`}
+                onBlur={(e) => setEmailError(e.target.value.length > 0 && !EMAIL_REGEX.test(e.target.value))}
+              />
+              {emailError && <p className="text-red-400 text-xs mt-1 text-left">Veuillez saisir un email valide</p>}
+            </div>
             <button type="submit" disabled={status === 'loading'} className="btn-gold whitespace-nowrap">
-              {status === 'loading' ? 'Envoi...' : 'Recevoir le guide'}
+              {status === 'loading' ? 'Envoi en cours...' : 'Recevoir le guide'}
             </button>
           </form>
           {status === 'ok' && (
             <p className="text-emerald text-sm mt-4">Merci ! Vérifiez votre boîte mail.</p>
           )}
           {status === 'err' && (
-            <p className="text-sm mt-4 text-red-400">Une erreur est survenue, réessayez.</p>
+            <div className="mt-4 space-y-2">
+              <p className="text-sm text-red-400">Une erreur est survenue. Contactez-nous directement sur WhatsApp, nous répondons sous 24h.</p>
+              <a href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite recevoir le guide de bienvenue.")} target="_blank" rel="noopener noreferrer" className="btn-outline w-full justify-center">
+                Contacter sur WhatsApp
+              </a>
+            </div>
           )}
         </div>
       </div>

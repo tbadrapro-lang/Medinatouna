@@ -1,8 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
+import { CONFIG, waLink } from '@/lib/config'
+import { track } from '@/lib/track'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function LeadMagnetPopup() {
   const [visible, setVisible] = useState(false)
@@ -10,6 +14,8 @@ export default function LeadMagnetPopup() {
   const [website, setWebsite] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
   const [modalOpen, setModalOpen] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+  const emailRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const onOpen = () => setModalOpen(true)
@@ -29,6 +35,19 @@ export default function LeadMagnetPopup() {
     return () => clearTimeout(t)
   }, [])
 
+  useEffect(() => {
+    if (visible && !modalOpen) emailRef.current?.focus()
+  }, [visible, modalOpen])
+
+  useEffect(() => {
+    if (!visible) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [visible])
+
   const dismiss = () => {
     localStorage.setItem('popup_dismissed', '1')
     setVisible(false)
@@ -46,7 +65,10 @@ export default function LeadMagnetPopup() {
       })
     } catch {}
     setStatus(error ? 'err' : 'ok')
-    if (!error) localStorage.setItem('popup_dismissed', '1')
+    if (!error) {
+      track('lead_magnet_submitted')
+      localStorage.setItem('popup_dismissed', '1')
+    }
   }
 
   if (!visible || modalOpen) return null
@@ -72,17 +94,27 @@ export default function LeadMagnetPopup() {
       ) : (
         <form onSubmit={submit} className="flex flex-col gap-2">
           <input
+            ref={emailRef}
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => setEmailError(email.length > 0 && !EMAIL_REGEX.test(email))}
             placeholder="Votre email"
-            className="form-input text-sm"
+            className={`form-input text-sm ${emailError ? 'border-red-400' : ''}`}
           />
+          {emailError && <p className="text-red-400 text-xs">Veuillez saisir un email valide</p>}
           <button type="submit" disabled={status === 'loading'} className="btn-gold justify-center text-sm">
-            {status === 'loading' ? 'Envoi...' : 'Recevoir →'}
+            {status === 'loading' ? 'Envoi en cours...' : 'Recevoir →'}
           </button>
-          {status === 'err' && <p className="text-red-400 text-xs">Erreur, réessayez.</p>}
+          {status === 'err' && (
+            <div className="space-y-1">
+              <p className="text-red-400 text-xs">Une erreur est survenue. Contactez-nous sur WhatsApp, nous répondons sous 24h.</p>
+              <a href={waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite recevoir le bon plan secret de Médine.")} target="_blank" rel="noopener noreferrer" className="btn-outline w-full justify-center text-xs">
+                Contacter sur WhatsApp
+              </a>
+            </div>
+          )}
         </form>
       )}
     </div>

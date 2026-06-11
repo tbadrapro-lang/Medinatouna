@@ -188,7 +188,7 @@ export default function Camp() {
                 <p className="text-sm">
                   Vidéo à venir — uploadez <code className="text-gold">/public/videos/camp-video.mp4</code>
                 </p>
-                <p className="text-xs text-ivory/40">
+                <p className="text-xs text-ivory/55">
                   (Badra : envoyer la vidéo par WhatsApp au 0764850414)
                 </p>
               </div>

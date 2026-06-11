@@ -42,5 +42,12 @@ git push origin main
 2. Dans o2switch : A record → 76.76.21.21 (Vercel)
 3. MX record → conserver les MX o2switch pour les emails
 
+## ⚠️ À faire avant le lancement officiel
+- Migrer toutes les images hébergées sur `i.ibb.co` vers `/public/images/` (et adapter les chemins dans le code) pour éviter toute dépendance à un hébergeur d'images tiers non garanti dans le temps.
+- Remplacer les placeholders société dans `app/mentions-legales/page.tsx` (nom de société/auto-entrepreneur, RCS/SIRET, adresse, directeur de publication).
+- Renseigner les liens Instagram, TikTok et PayPal dans `lib/config.ts` (et `PAYPAL_LINK` dans `PaymentModal.tsx` / `Ebooks.tsx`).
+- Configurer les enregistrements DNS SPF/DKIM pour Brevo afin de fiabiliser la délivrabilité des emails transactionnels.
+- Uploader la vidéo du camp bédouin dans `/public/videos/camp-video.mp4`.
+
 ## Contact
 WhatsApp: +33764850414
