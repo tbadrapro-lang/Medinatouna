@@ -4,7 +4,7 @@ export default function WhatsappFloat() {
       href="https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20obtenir%20des%20informations%20sur%20vos%20services%20%28institut%20de%20langue%2C%20camp%20b%C3%A9douin%2C%20e-books%29.%20Pourriez-vous%20me%20contacter%20%3F%20Merci."
       target="_blank"
       rel="noopener noreferrer"
-      className="whatsapp-float"
+      className="whatsapp-float bottom-24 md:bottom-6"
       aria-label="Contacter sur WhatsApp"
     >
       <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">

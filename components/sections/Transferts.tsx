@@ -34,7 +34,7 @@ const CARDS = [
 
 export default function Transferts() {
   return (
-    <section id="transferts" className="relative py-24 px-6 bg-void">
+    <section id="transferts" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="section-label justify-center">Mobilité</span>

@@ -6,6 +6,7 @@ import { saveLead } from '@/lib/supabase'
 import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
 import FAQAccordion from '@/components/ui/FAQAccordion'
+import SafeImage from '@/components/ui/SafeImage'
 
 const PACKS = [
   {
@@ -108,7 +109,6 @@ const AVIS = [
 type Status = 'idle' | 'loading' | 'ok' | 'err'
 
 export default function Institut() {
-  const [imgError, setImgError] = useState(false)
   const [modalPack, setModalPack] = useState<(typeof PACKS)[number] | null>(null)
 
   // Multi-step registration form
@@ -117,7 +117,7 @@ export default function Institut() {
   const [form, setForm] = useState({
     nom: '', email: '', whatsapp: '', nationalite: '',
     formule: '', dates: '', duree: '', niveau: '',
-    message: '', accepted: false,
+    message: '', accepted: false, website: '',
   })
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -145,7 +145,7 @@ export default function Institut() {
       await fetch('/api/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: form.nom, email: form.email, service: 'institut', formule: form.formule, whatsapp: form.whatsapp, message }),
+        body: JSON.stringify({ nom: form.nom, email: form.email, service: 'institut', formule: form.formule, whatsapp: form.whatsapp, message, website: form.website }),
       })
     } catch {}
 
@@ -157,24 +157,17 @@ export default function Institut() {
   }
 
   return (
-    <section id="institut" className="relative py-24 px-6 bg-deep">
+    <section id="institut" className="relative py-20 md:py-28 px-5 md:px-10 bg-deep">
       <div className="max-w-7xl mx-auto">
         {/* About */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
           <div className="relative aspect-[4/3] border border-gold/15 overflow-hidden bg-forest/40 order-2 lg:order-1">
-            {imgError ? (
-              <div className="w-full h-full flex items-center justify-center bg-forest/40">
-                <p className="font-arabic text-4xl text-gold" dir="rtl">مدرسة</p>
-              </div>
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src="https://i.ibb.co/jkL1QkT0/institut-facade.jpg"
-                alt="Centre Medinatouna à Médine"
-                className="w-full h-full object-cover"
-                onError={() => setImgError(true)}
-              />
-            )}
+            <SafeImage
+              src="https://i.ibb.co/jkL1QkT0/institut-facade.jpg"
+              alt="Centre Medinatouna à Médine"
+              className="w-full h-full object-cover"
+              fallbackText="مدرسة"
+            />
           </div>
 
           <div className="order-1 lg:order-2">
@@ -229,7 +222,7 @@ export default function Institut() {
                 </span>
               )}
               <h3 className="font-display text-2xl font-semibold mb-2">{pack.name}</h3>
-              <p className="font-display text-3xl text-gold mb-6">{pack.price}</p>
+              <p className="font-display text-[2.5rem] leading-none text-[#c49a3c] font-semibold mb-6">{pack.price}</p>
               <ul className="space-y-3 mb-8 flex-1">
                 {pack.items.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm text-ivory/80">
@@ -394,6 +387,7 @@ export default function Institut() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="grid gap-4">
+                  <input type="text" name="website" value={form.website} onChange={update('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
                   {step === 1 && (
                     <>
                       <p className="text-xs uppercase tracking-widest text-gold mb-1">Étape 1 — Profil</p>

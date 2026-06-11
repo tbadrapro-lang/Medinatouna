@@ -47,6 +47,26 @@ export default function RootLayout({
         className={`${cormorant.variable} ${dmSans.variable} ${notoNaskhArabic.variable} bg-[#07110c] text-[#f4efe4] antialiased overflow-x-hidden`}
       >
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'TravelAgency',
+              name: "Les Bons Plans d'Arabie",
+              url: 'https://lesbonsplansdarabie.com',
+              description:
+                "Institut de langue arabe agréé à Médine, camp bédouin dans le désert, e-books et adresses confidentielles. Omra incluse, professeurs natifs.",
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Médine',
+                addressCountry: 'SA',
+              },
+              areaServed: 'SA',
+              priceRange: '€€',
+            }),
+          }}
+        />
       </body>
     </html>
   )

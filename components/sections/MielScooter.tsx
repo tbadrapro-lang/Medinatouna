@@ -5,7 +5,7 @@ const SCOOTER_WA = 'https://wa.me/33764850414?text=Bonjour%2C%20je%20souhaite%20
 
 export default function MielScooter() {
   return (
-    <section id="miel-scooter" className="relative py-24 px-6 bg-void">
+    <section id="miel-scooter" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="section-label justify-center">Produits &amp; Services</span>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import SafeImage from './SafeImage'
 
 export default function Carousel({
   images,
@@ -13,7 +14,6 @@ export default function Carousel({
   aspect?: string
 }) {
   const [index, setIndex] = useState(0)
-  const [errored, setErrored] = useState<Record<number, boolean>>({})
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
 
@@ -53,16 +53,11 @@ export default function Carousel({
       {/* Mobile: horizontal scroll-snap */}
       <div
         ref={scrollerRef}
-        className="flex md:hidden overflow-x-auto snap-x snap-mandatory gap-3 pb-2 -mx-1 px-1"
+        className="carousel-track flex md:hidden overflow-x-auto snap-x snap-mandatory gap-3 pb-2 -mx-1 px-1"
       >
         {images.map((src, i) => (
           <div key={i} className={`flex-shrink-0 w-[85vw] snap-start ${aspect} border border-gold/15 overflow-hidden bg-forest/40`}>
-            {errored[i] ? (
-              <ArabicFallback />
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={src} alt="" className="w-full h-full object-cover" onError={() => setErrored(e => ({ ...e, [i]: true }))} />
-            )}
+            <SafeImage src={src} alt="" className="w-full h-full object-cover" fallbackText="مدينتنا" />
           </div>
         ))}
       </div>
@@ -70,12 +65,7 @@ export default function Carousel({
       {/* Desktop: single image with arrows + dots */}
       <div className="hidden md:block">
         <div className={`relative ${aspect} border border-gold/15 overflow-hidden bg-forest/40`}>
-          {errored[index] ? (
-            <ArabicFallback />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={images[index]} alt="" className="w-full h-full object-cover transition-opacity duration-500" onError={() => setErrored(e => ({ ...e, [index]: true }))} />
-          )}
+          <SafeImage src={images[index]} alt="" className="w-full h-full object-cover transition-opacity duration-500" fallbackText="مدينتنا" />
           <button
             onClick={() => { pause(); prev(); resume() }}
             aria-label="Précédent"
@@ -104,14 +94,6 @@ export default function Carousel({
       </div>
 
       {caption && <p className="text-center text-xs uppercase tracking-widest text-gold/70 mt-3">{caption}</p>}
-    </div>
-  )
-}
-
-function ArabicFallback() {
-  return (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-forest to-night">
-      <p className="font-arabic text-3xl text-gold/60" dir="rtl">مدينتنا</p>
     </div>
   )
 }

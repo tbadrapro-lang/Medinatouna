@@ -109,6 +109,7 @@ export default function Camp() {
           formule: String(data.get('formule') || ''),
           whatsapp: String(data.get('whatsapp') || ''),
           message,
+          website: String(data.get('website') || ''),
         }),
       })
     } catch {}
@@ -123,7 +124,7 @@ export default function Camp() {
   }
 
   return (
-    <section id="camp" className="relative py-24 px-6 bg-void">
+    <section id="camp" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="section-label justify-center">Expérience désert</span>
@@ -202,7 +203,7 @@ export default function Camp() {
                 </span>
               )}
               <h3 className="font-display text-2xl font-semibold mb-2">{pack.name}</h3>
-              <p className="font-display text-3xl text-gold mb-6">{pack.price}</p>
+              <p className="font-display text-[2.5rem] leading-none text-[#c49a3c] font-semibold mb-6">{pack.price}</p>
               <ul className="space-y-3 mb-8 flex-1">
                 {pack.items.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm text-ivory/80">
@@ -293,6 +294,7 @@ export default function Camp() {
 
           <div className="bg-forest/30 border border-white/5 rounded-2xl p-8">
             <form onSubmit={handleSubmit} className="grid gap-4">
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
               <input name="nom" required placeholder="Nom complet" className="form-input" />
               <input name="email" type="email" required placeholder="Email" className="form-input" />
               <input name="whatsapp" placeholder="WhatsApp (optionnel)" className="form-input" />

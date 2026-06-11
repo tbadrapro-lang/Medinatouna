@@ -44,6 +44,7 @@ export default function Hero() {
         ref={imgRef}
         className="absolute inset-0 -top-[10%] h-[120%] bg-cover bg-center"
         style={{
+          backgroundColor: '#07110c',
           backgroundImage: `url('${bgImage}')`,
           backgroundAttachment: isMobile ? 'scroll' : 'fixed',
         }}

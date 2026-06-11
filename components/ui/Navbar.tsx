@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import SafeImage from './SafeImage'
 
 const TABS = [
   { id: 'institut', label: 'Institut' },
@@ -49,23 +50,15 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 h-[60px] md:h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <SafeImage
                 src="https://i.ibb.co/yF2D2PQJ/logo.jpg"
                 alt="Medinatouna"
-                width={44}
-                height={44}
-                className="rounded-full border border-gold/40 object-cover"
-                onError={(e) => { e.currentTarget.style.display = 'none' }}
+                className="w-11 h-11 rounded-full border border-gold/40 object-cover"
               />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <SafeImage
                 src="https://i.ibb.co/nMPt3MjX/vision2030.png"
                 alt="Vision 2030"
-                width={32}
-                height={32}
-                className="opacity-80 hidden sm:block"
-                onError={(e) => { e.currentTarget.style.display = 'none' }}
+                className="w-8 h-8 opacity-80 hidden sm:block"
               />
             </div>
             <span className="font-display leading-tight">

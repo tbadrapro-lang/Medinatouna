@@ -5,6 +5,13 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+.carousel-track {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+
 :root {
   --night: #040d08;
   --void: #07110c;
@@ -92,7 +99,7 @@ body { background: #07110c; color: #f4efe4; -webkit-font-smoothing: antialiased;
 
 /* === WHATSAPP FLOAT === */
 .whatsapp-float {
-  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 500;
+  position: fixed; right: 1.5rem; z-index: 500;
   width: 56px; height: 56px; border-radius: 50%;
   background: #25d366; display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 20px rgba(37,211,102,.4);

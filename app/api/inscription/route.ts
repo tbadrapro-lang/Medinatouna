@@ -1,5 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const HTML_RE = /<[^>]*>/
+
+const RATE_LIMIT_WINDOW = 60 * 1000
+const RATE_LIMIT_MAX = 5
+const rateLimitMap = new Map<string, number[]>()
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const timestamps = (rateLimitMap.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW)
+  timestamps.push(now)
+  rateLimitMap.set(ip, timestamps)
+  return timestamps.length > RATE_LIMIT_MAX
+}
+
 const SUBJECTS: Record<string, string> = {
   institut: 'Votre demande — Institut Medinatouna',
   camp_bedouin: 'Votre demande — Camp Bédouin',
@@ -33,11 +48,39 @@ function buildHtml(service: string, nom: string, formule?: string, message?: str
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = (req.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim()
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ error: 'Trop de requêtes, réessayez plus tard.' }, { status: 429 })
+    }
+
     const body = await req.json()
-    const { nom, email, service, formule, message } = body || {}
+    const { nom, email, service, formule, message, website } = body || {}
+
+    // Honeypot
+    if (typeof website === 'string' && website.trim() !== '') {
+      return NextResponse.json({ ok: true })
+    }
 
     if (!email) {
       return NextResponse.json({ error: 'email requis' }, { status: 400 })
+    }
+
+    if (!EMAIL_RE.test(email) || email.length > 200) {
+      return NextResponse.json({ error: 'email invalide' }, { status: 400 })
+    }
+
+    if (typeof nom === 'string' && nom.length > 100) {
+      return NextResponse.json({ error: 'nom trop long' }, { status: 400 })
+    }
+
+    if (typeof message === 'string' && message.length > 1000) {
+      return NextResponse.json({ error: 'message trop long' }, { status: 400 })
+    }
+
+    for (const field of [nom, email, message, formule]) {
+      if (typeof field === 'string' && HTML_RE.test(field)) {
+        return NextResponse.json({ error: 'contenu invalide' }, { status: 400 })
+      }
     }
 
     const apiKey = process.env.BREVO_API_KEY

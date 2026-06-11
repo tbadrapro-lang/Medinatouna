@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 
@@ -22,7 +22,16 @@ export default function PaymentModal({
   const [step, setStep] = useState(1)
   const [accepted, setAccepted] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
-  const [form, setForm] = useState({ nom: '', email: '', whatsapp: '', personnes: '', dates: '' })
+  const [form, setForm] = useState({ nom: '', email: '', whatsapp: '', personnes: '', dates: '', website: '' })
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    window.dispatchEvent(new CustomEvent('paymentmodal:open'))
+    return () => {
+      document.body.style.overflow = ''
+      window.dispatchEvent(new CustomEvent('paymentmodal:close'))
+    }
+  }, [])
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -44,7 +53,7 @@ export default function PaymentModal({
       await fetch('/api/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: form.nom, email: form.email, service, formule: title, whatsapp: form.whatsapp, message }),
+        body: JSON.stringify({ nom: form.nom, email: form.email, service, formule: title, whatsapp: form.whatsapp, message, website: form.website }),
       })
     } catch {}
     setStatus(error ? 'err' : 'ok')
@@ -53,12 +62,13 @@ export default function PaymentModal({
   const waText = encodeURIComponent(`Bonjour, je souhaite réserver : ${title} (${price}). Nom: ${form.nom}, Email: ${form.email}, Personnes: ${form.personnes}, Dates: ${form.dates}`)
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-4">
       <div className="absolute inset-0 bg-night/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-deep border border-gold/20 p-6 md:p-8">
-        <button onClick={onClose} aria-label="Fermer" className="absolute top-4 right-4 text-ivory/60 hover:text-gold transition-colors">
+      <div className="relative w-full md:max-w-lg max-h-[88vh] overflow-y-auto bg-deep border border-gold/20 rounded-t-2xl md:rounded-none p-6 md:p-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+        <button onClick={onClose} aria-label="Fermer" className="absolute top-4 right-4 w-11 h-11 flex items-center justify-center text-ivory/60 hover:text-gold transition-colors">
           <X size={20} />
         </button>
+        <input type="text" name="website" value={form.website} onChange={update('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
 
         <h3 className="font-display text-2xl font-semibold text-ivory mb-1">{title}</h3>
         <p className="font-display text-xl text-gold mb-6">{price}</p>

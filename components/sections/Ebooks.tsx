@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { X } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 
@@ -39,11 +39,21 @@ type Status = 'idle' | 'loading' | 'ok' | 'err'
 
 function EbookModal({ ebook, onClose }: { ebook: (typeof EBOOKS)[number]; onClose: () => void }) {
   const waText = encodeURIComponent(`Bonjour, je souhaite acheter un e-book sur votre site ("${ebook.title}", ${ebook.price}). Pouvez-vous m'indiquer les modalités de paiement et de téléchargement ? Merci.`)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    window.dispatchEvent(new CustomEvent('paymentmodal:open'))
+    return () => {
+      document.body.style.overflow = ''
+      window.dispatchEvent(new CustomEvent('paymentmodal:close'))
+    }
+  }, [])
+
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-4">
       <div className="absolute inset-0 bg-night/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-deep border border-gold/20 p-6 md:p-8">
-        <button onClick={onClose} aria-label="Fermer" className="absolute top-4 right-4 text-ivory/60 hover:text-gold transition-colors">
+      <div className="relative w-full md:max-w-md max-h-[88vh] overflow-y-auto bg-deep border border-gold/20 rounded-t-2xl md:rounded-none p-6 md:p-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+        <button onClick={onClose} aria-label="Fermer" className="absolute top-4 right-4 w-11 h-11 flex items-center justify-center text-ivory/60 hover:text-gold transition-colors">
           <X size={20} />
         </button>
         <p className="font-arabic text-2xl text-gold mb-2" dir="rtl">{ebook.arabic}</p>
@@ -82,6 +92,7 @@ export default function Ebooks() {
     const form = e.currentTarget
     const data = new FormData(form)
     const email = String(data.get('email') || '')
+    const website = String(data.get('website') || '')
 
     const { error } = await saveLead({
       nom: email,
@@ -94,7 +105,7 @@ export default function Ebooks() {
       await fetch('/api/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: email, email, service: 'lead_magnet' }),
+        body: JSON.stringify({ nom: email, email, service: 'lead_magnet', website }),
       })
     } catch {}
 
@@ -107,7 +118,7 @@ export default function Ebooks() {
   }
 
   return (
-    <section id="ebooks" className="relative py-24 px-6 bg-deep">
+    <section id="ebooks" className="relative py-20 md:py-28 px-5 md:px-10 bg-deep">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="section-label justify-center">Ressources</span>
@@ -154,6 +165,7 @@ export default function Ebooks() {
             Inscrivez-vous et recevez immédiatement notre e-book offert par email.
           </p>
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
             <input
               name="email"
               type="email"

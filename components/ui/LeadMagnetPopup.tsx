@@ -7,12 +7,25 @@ import { saveLead } from '@/lib/supabase'
 export default function LeadMagnetPopup() {
   const [visible, setVisible] = useState(false)
   const [email, setEmail] = useState('')
+  const [website, setWebsite] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
+  const [modalOpen, setModalOpen] = useState(false)
+
+  useEffect(() => {
+    const onOpen = () => setModalOpen(true)
+    const onClose = () => setModalOpen(false)
+    window.addEventListener('paymentmodal:open', onOpen)
+    window.addEventListener('paymentmodal:close', onClose)
+    return () => {
+      window.removeEventListener('paymentmodal:open', onOpen)
+      window.removeEventListener('paymentmodal:close', onClose)
+    }
+  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (localStorage.getItem('popup_dismissed')) return
-    const t = setTimeout(() => setVisible(true), 8000)
+    const t = setTimeout(() => setVisible(true), 12000)
     return () => clearTimeout(t)
   }, [])
 
@@ -29,21 +42,22 @@ export default function LeadMagnetPopup() {
       await fetch('/api/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: 'Lead magnet', email, service: 'lead_magnet' }),
+        body: JSON.stringify({ nom: 'Lead magnet', email, service: 'lead_magnet', website }),
       })
     } catch {}
     setStatus(error ? 'err' : 'ok')
     if (!error) localStorage.setItem('popup_dismissed', '1')
   }
 
-  if (!visible) return null
+  if (!visible || modalOpen) return null
 
   return (
-    <div className="fixed z-[150] bottom-20 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-[320px] bg-[#0c1d14] border border-gold/30 shadow-2xl p-5 rounded-none">
+    <div className="fixed z-[45] bottom-28 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-[320px] bg-[#0c1d14] border border-gold/30 shadow-2xl p-5 rounded-none">
       <div className="w-10 h-px bg-gold mb-3" />
       <button onClick={dismiss} aria-label="Fermer" className="absolute top-3 right-3 text-ivory/60 hover:text-gold transition-colors">
         <X size={18} />
       </button>
+      <input type="text" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
       <span className="inline-block text-xs uppercase tracking-widest text-gold border border-gold/30 px-2 py-1 mb-3">
         🎁 Offre exclusive
       </span>
