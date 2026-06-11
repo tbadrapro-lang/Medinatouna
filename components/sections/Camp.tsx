@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { Play, Star, Quote } from 'lucide-react'
+import { Star, Quote } from 'lucide-react'
 import { saveLead } from '@/lib/supabase'
 import Carousel from '@/components/ui/Carousel'
 import PaymentModal from '@/components/ui/PaymentModal'
@@ -80,7 +80,6 @@ type Status = 'idle' | 'loading' | 'ok' | 'err'
 export default function Camp() {
   const [status, setStatus] = useState<Status>('idle')
   const [modalPack, setModalPack] = useState<(typeof PACKS)[number] | null>(null)
-  const [videoError, setVideoError] = useState(false)
   const [emailError, setEmailError] = useState(false)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -172,27 +171,20 @@ export default function Camp() {
           </div>
 
           {/* Video */}
-          <div className="relative aspect-video border border-gold/20 bg-forest/20 overflow-hidden">
-            {!videoError ? (
+          <div>
+            <h3 className="font-serif text-xl text-[#f4efe4] mb-4">L&apos;ambiance du camp en vidéo</h3>
+            <div className="relative aspect-video overflow-hidden border border-[#c49a3c]/20 bg-[#040d08]">
               <video
-                src="/videos/camp-video.mp4"
                 controls
+                playsInline
+                preload="metadata"
                 className="w-full h-full object-cover"
-                onError={() => setVideoError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-ivory/60 px-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center">
-                  <Play className="text-gold" size={28} />
-                </div>
-                <p className="text-sm">
-                  Vidéo à venir — uploadez <code className="text-gold">/public/videos/camp-video.mp4</code>
-                </p>
-                <p className="text-xs text-ivory/55">
-                  (Badra : envoyer la vidéo par WhatsApp au 0764850414)
-                </p>
-              </div>
-            )}
+                poster="/camp-tente-nuit.webp"
+              >
+                <source src="/camp-video.mp4" type="video/mp4" />
+                Votre navigateur ne supporte pas la vidéo.
+              </video>
+            </div>
           </div>
         </div>
 
