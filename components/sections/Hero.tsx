@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-
-const HERO_IMAGE = '/hero-masjid-nabawi.jpg'
+import { useConfig } from '@/components/ConfigProvider'
 
 export default function Hero() {
+  const CONFIG = useConfig()
+  const HERO_IMAGE = CONFIG.texts.hero_bg_image
   const imgRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -26,6 +27,8 @@ export default function Hero() {
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [isMobile])
+
+  if (!CONFIG.visible.hero) return null
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden flex items-center">
@@ -56,14 +59,14 @@ export default function Hero() {
           </div>
 
           <p className="font-arabic text-2xl md:text-3xl text-gold mb-4" dir="rtl">
-            الخطط الرائعة من الجزيرة العربية
+            {CONFIG.texts.hero_arabic}
           </p>
 
           <h1
             className="font-display font-semibold leading-[1.05] mb-6"
             style={{ fontSize: 'clamp(3rem, 7vw, 6.5rem)' }}
           >
-            Vivez l&apos;Arabie{' '}
+            {CONFIG.texts.hero_titre}{' '}
             <em
               className="not-italic bg-clip-text text-transparent bg-[length:200%_auto]"
               style={{
@@ -72,7 +75,7 @@ export default function Hero() {
                 animation: 'shimmer 4s linear infinite',
               }}
             >
-              de l&apos;intérieur.
+              {CONFIG.texts.hero_titre_accent}
             </em>
           </h1>
 
@@ -83,8 +86,7 @@ export default function Hero() {
 
           <div className="bg-forest/45 backdrop-blur rounded-2xl border border-white/5 p-6 mb-10 max-w-xl">
             <p className="font-body text-ivory/90 leading-relaxed">
-              Institut de langue arabe agréé à Médine, camp bédouin dans le désert,
-              e-books et adresses confidentielles. Omra incluse, professeurs natifs.
+              {CONFIG.texts.hero_tagline}
             </p>
           </div>
 

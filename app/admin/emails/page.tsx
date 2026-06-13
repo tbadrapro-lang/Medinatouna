@@ -8,6 +8,7 @@ type Lead = {
   email: string
   service: string
   status?: string
+  temperature?: string
   last_email_sent?: string
 }
 
@@ -29,55 +30,85 @@ const STATUS_LABELS: Record<string, string> = {
   perdu: 'Perdu',
 }
 
-const TEMPLATES = [
+const TEMPLATES_CHAUD = [
   {
-    id: 'relance_douce',
-    label: 'Relance douce',
-    subject: "Toujours intéressé(e) ?",
-    text: "As-salamu alaykum {nom}, vous avez manifesté de l'intérêt pour {service}. Les places de la prochaine session se remplissent — souhaitez-vous qu'on en discute sur WhatsApp ?",
+    id: 'chaud_j1',
+    label: 'J+1 — Votre place vous attend',
+    subject: 'Votre place vous attend',
+    text: "As-salamu alaykum {nom}, vous avez choisi {formule}. Il reste quelques places pour la prochaine session. On en parle sur WhatsApp aujourd'hui ?",
   },
   {
-    id: 'dernieres_places',
-    label: 'Dernières places',
-    subject: "Dernières places disponibles",
-    text: "As-salamu alaykum {nom}, nous tenions à vous prévenir : il ne reste que quelques places pour {service} (24 places par session). N'hésitez pas à nous contacter rapidement pour réserver la vôtre.",
+    id: 'chaud_j3',
+    label: 'J+3 — Dernières places',
+    subject: 'Dernières places disponibles',
+    text: "{nom}, la session se remplit vite (24 places maximum). Réservez la vôtre avant qu'il ne soit trop tard.",
   },
   {
-    id: 'nouveaute',
-    label: 'Nouveauté',
-    subject: "Une nouveauté chez Les Bons Plans d'Arabie",
-    text: "As-salamu alaykum {nom}, nous avons une nouveauté à vous annoncer concernant {service}. Restez connecté(e), plus d'informations arrivent très bientôt !",
+    id: 'chaud_j7',
+    label: 'J+7 — On vous accompagne',
+    subject: 'On vous accompagne',
+    text: "{nom}, une question vous retient ? Notre équipe répond à tout sur WhatsApp, sans engagement. Barak Allahu fik.",
+  },
+]
+
+const TEMPLATES_FROID = [
+  {
+    id: 'froid_j3',
+    label: 'J+3 — Votre bon plan + bonus',
+    subject: 'Votre bon plan + bonus',
+    text: "As-salamu alaykum {nom}, voici votre bon plan de Médine promis. Bonus : saviez-vous que l'institut inclut la Omra complète ?",
+  },
+  {
+    id: 'froid_j10',
+    label: "J+10 — L'expérience en images",
+    subject: "L'expérience en images",
+    text: "{nom}, découvrez en vidéo le camp bédouin et l'institut à Médine. Une immersion qui donne envie de partir.",
+  },
+  {
+    id: 'froid_j21',
+    label: 'J+21 — Offre découverte',
+    subject: 'Offre découverte',
+    text: "{nom}, prêt à vivre Médine de l'intérieur ? Parlons de votre projet quand vous voulez, sans pression.",
   },
 ]
 
 const COOLDOWN_MS = 72 * 60 * 60 * 1000
 
 export default function AdminEmailsPage() {
+  const [tab, setTab] = useState<'chaud' | 'froid'>('chaud')
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [service, setService] = useState('tous')
-  const [statut, setStatut] = useState('nouveau')
-  const [templateId, setTemplateId] = useState(TEMPLATES[0].id)
+  const [statut, setStatut] = useState('tous')
+
+  const TEMPLATES = tab === 'chaud' ? TEMPLATES_CHAUD : TEMPLATES_FROID
+  const [templateId, setTemplateId] = useState(TEMPLATES_CHAUD[0].id)
   const [texts, setTexts] = useState<Record<string, string>>(
-    Object.fromEntries(TEMPLATES.map((t) => [t.id, t.text]))
+    Object.fromEntries([...TEMPLATES_CHAUD, ...TEMPLATES_FROID].map((t) => [t.id, t.text]))
   )
   const [subjects, setSubjects] = useState<Record<string, string>>(
-    Object.fromEntries(TEMPLATES.map((t) => [t.id, t.subject]))
+    Object.fromEntries([...TEMPLATES_CHAUD, ...TEMPLATES_FROID].map((t) => [t.id, t.subject]))
   )
   const [sending, setSending] = useState(false)
   const [result, setResult] = useState<{ sent: number; skipped: number } | null>(null)
 
   useEffect(() => {
+    setTemplateId(tab === 'chaud' ? TEMPLATES_CHAUD[0].id : TEMPLATES_FROID[0].id)
+    setResult(null)
+  }, [tab])
+
+  useEffect(() => {
     const params = new URLSearchParams()
     if (service !== 'tous') params.set('service', service)
     if (statut !== 'tous') params.set('statut', statut)
+    params.set('temperature', tab)
 
     setLoading(true)
     fetch(`/api/admin/leads?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => setLeads(data.leads || []))
       .finally(() => setLoading(false))
-  }, [service, statut])
+  }, [service, statut, tab])
 
   const now = Date.now()
   const eligible = leads.filter((l) => !l.last_email_sent || now - new Date(l.last_email_sent).getTime() > COOLDOWN_MS)
@@ -86,6 +117,7 @@ export default function AdminEmailsPage() {
   const previewText = texts[templateId]
     .replace(/\{nom\}/g, eligible[0]?.nom || 'Prénom')
     .replace(/\{service\}/g, SERVICE_LABELS[eligible[0]?.service] || 'notre offre')
+    .replace(/\{formule\}/g, 'votre formule')
 
   async function send() {
     if (eligible.length === 0) return
@@ -101,6 +133,7 @@ export default function AdminEmailsPage() {
         leadIds: eligible.slice(0, 50).map((l) => l.id),
         message: texts[templateId],
         subject: subjects[templateId],
+        relanceType: templateId,
       }),
     })
 
@@ -118,6 +151,26 @@ export default function AdminEmailsPage() {
         Choisissez un modèle, sélectionnez vos destinataires, prévisualisez puis envoyez. Une personne ne reçoit pas
         plus d&apos;un email tous les 3 jours.
       </p>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setTab('chaud')}
+          className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+            tab === 'chaud' ? 'bg-red-500/15 text-red-300 border-red-500/30' : 'border-white/10 text-[#f4efe4]/60'
+          }`}
+        >
+          🔥 Leads chauds
+        </button>
+        <button
+          onClick={() => setTab('froid')}
+          className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+            tab === 'froid' ? 'bg-blue-500/15 text-blue-300 border-blue-500/30' : 'border-white/10 text-[#f4efe4]/60'
+          }`}
+        >
+          ❄️ Leads froids
+        </button>
+      </div>
 
       {/* Templates */}
       <div className="grid gap-3 mb-6">
@@ -174,7 +227,7 @@ export default function AdminEmailsPage() {
       ) : (
         <>
           <p className="text-sm text-[#f4efe4]/70 mb-1">
-            {eligible.length} destinataire(s) éligible(s)
+            {eligible.length} destinataire(s) éligible(s) — {tab === 'chaud' ? '🔥 chauds' : '❄️ froids'}
             {onCooldown > 0 && <span className="text-[#f4efe4]/40"> · {onCooldown} déjà relancé(s) récemment (exclus)</span>}
           </p>
 

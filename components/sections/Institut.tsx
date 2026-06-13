@@ -170,6 +170,8 @@ export default function Institut({ packs }: { packs?: ContentItem[] }) {
     }
   }
 
+  if (!CONFIG.visible.institut) return null
+
   return (
     <section id="institut" className="relative py-20 md:py-28 px-5 md:px-10 bg-deep">
       <div className="max-w-7xl mx-auto">
@@ -187,27 +189,16 @@ export default function Institut({ packs }: { packs?: ContentItem[] }) {
           <div className="order-1 lg:order-2">
             <span className="section-label">Institut de langue</span>
             <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4 mb-2">
-              Centre Medinatouna à Médine
+              {CONFIG.texts.institut_titre}
             </h2>
             <p className="font-body text-gold mb-6">
               Centre de langue arabe agréé par l&apos;État saoudien
             </p>
-            <p className="font-body text-ivory/70 leading-relaxed mb-4">
-              Medinatouna vous propose un apprentissage de l&apos;arabe selon la méthode égyptienne,
-              reconnue pour son efficacité, structurée en 12 niveaux pédagogiques progressifs allant
-              du débutant complet jusqu&apos;à un niveau avancé de maîtrise.
-            </p>
-            <p className="font-body text-ivory/70 leading-relaxed mb-4">
-              Au-delà des cours, notre mission est d&apos;offrir un accompagnement humain complet :
-              de la préparation de votre voyage jusqu&apos;à votre quotidien à Médine, notre équipe
-              est présente à chaque étape pour que vous puissiez vous concentrer sur l&apos;essentiel
-              — votre apprentissage et votre expérience spirituelle.
-            </p>
-            <p className="font-body text-ivory/70 leading-relaxed mb-6">
-              Installé au cœur de la ville du Prophète, notre centre vous offre un cadre serein,
-              respectueux et propice à la concentration, dans une ambiance bienveillante entre
-              étudiants venus du monde entier.
-            </p>
+            {CONFIG.texts.institut_description.split('\n\n').map((para, i) => (
+              <p key={i} className="font-body text-ivory/70 leading-relaxed mb-4">
+                {para}
+              </p>
+            ))}
             <div className="flex flex-wrap gap-2">
               {['Centre agréé par l\'État', 'Accompagnement humain', 'Expérience complète', 'Ambiance respectueuse'].map((b) => (
                 <span key={b} className="text-xs uppercase tracking-wider px-3 py-1.5 rounded-full bg-forest/50 border border-white/5 text-ivory/80">

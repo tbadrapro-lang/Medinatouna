@@ -1,10 +1,10 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import { CONFIG } from '@/lib/config'
+import { DEFAULT_CONFIG } from '@/lib/getSettings'
 import type { EffectiveConfig } from '@/lib/getSettings'
 
-const ConfigContext = createContext<EffectiveConfig>(CONFIG)
+const ConfigContext = createContext<EffectiveConfig>(DEFAULT_CONFIG)
 
 export function ConfigProvider({
   config,

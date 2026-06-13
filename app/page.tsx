@@ -1,6 +1,7 @@
 import Navbar from '@/components/ui/Navbar'
 import ScrollProgress from '@/components/ui/ScrollProgress'
 import Hero from '@/components/sections/Hero'
+import Vision2030 from '@/components/sections/Vision2030'
 import TrustBar from '@/components/ui/TrustBar'
 import Institut from '@/components/sections/Institut'
 import Camp from '@/components/sections/Camp'
@@ -27,6 +28,7 @@ export default async function Home() {
       <ScrollProgress />
       <Navbar />
       <Hero />
+      <Vision2030 />
       <TrustBar />
       <Institut packs={packsInstitut} />
       <Camp packs={packsCamp} />

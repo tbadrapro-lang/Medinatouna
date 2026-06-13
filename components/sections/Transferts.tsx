@@ -35,6 +35,7 @@ const CARDS = [
 
 export default function Transferts() {
   const CONFIG = useConfig()
+  if (!CONFIG.visible.transferts) return null
   const WA = waLink(CONFIG.WHATSAPP_PRESTARABIA, "Bonjour, je souhaite réserver un transfert ou un guide à Médine. Pouvez-vous m'indiquer vos disponibilités et vos tarifs ? Merci.")
   return (
     <section id="transferts" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">

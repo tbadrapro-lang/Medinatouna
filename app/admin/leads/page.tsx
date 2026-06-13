@@ -13,8 +13,12 @@ type Lead = {
   message?: string
   status?: string
   notes?: string
+  temperature?: string
+  relance_count?: number
   created_at: string
 }
+
+const SEQUENCE_LENGTH = 3
 
 const SERVICE_LABELS: Record<string, string> = {
   institut: 'Institut',
@@ -53,6 +57,7 @@ export default function AdminLeadsPage() {
   const [loading, setLoading] = useState(true)
   const [service, setService] = useState('tous')
   const [statut, setStatut] = useState('tous')
+  const [temperature, setTemperature] = useState('tous')
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Lead | null>(null)
   const [notesDraft, setNotesDraft] = useState('')
@@ -63,6 +68,7 @@ export default function AdminLeadsPage() {
     const params = new URLSearchParams()
     if (service !== 'tous') params.set('service', service)
     if (statut !== 'tous') params.set('statut', statut)
+    if (temperature !== 'tous') params.set('temperature', temperature)
     if (search) params.set('search', search)
 
     fetch(`/api/admin/leads?${params.toString()}`)
@@ -75,7 +81,18 @@ export default function AdminLeadsPage() {
     const timeout = setTimeout(load, 300)
     return () => clearTimeout(timeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [service, statut, search])
+  }, [service, statut, temperature, search])
+
+  async function toggleTemperature(lead: Lead) {
+    const newTemp = lead.temperature === 'chaud' ? 'froid' : 'chaud'
+    setLeads((ls) => ls.map((l) => (l.id === lead.id ? { ...l, temperature: newTemp } : l)))
+    if (selected?.id === lead.id) setSelected({ ...selected, temperature: newTemp })
+    await fetch('/api/admin/leads', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: lead.id, temperature: newTemp }),
+    })
+  }
 
   async function cycleStatus(lead: Lead) {
     const newStatus = nextStatus(lead.status)
@@ -132,6 +149,11 @@ export default function AdminLeadsPage() {
             <option key={s} value={s}>{STATUS_LABELS[s]}</option>
           ))}
         </select>
+        <select value={temperature} onChange={(e) => setTemperature(e.target.value)} className="form-input w-auto text-sm">
+          <option value="tous">Toute température</option>
+          <option value="chaud">🔥 Chaud</option>
+          <option value="froid">❄️ Froid</option>
+        </select>
         <input
           placeholder="Rechercher par nom ou email..."
           value={search}
@@ -158,9 +180,22 @@ export default function AdminLeadsPage() {
                     {SERVICE_LABELS[lead.service] || lead.service}
                   </span>
                   {lead.formule && <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 border border-white/10">{lead.formule}</span>}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleTemperature(lead) }}
+                    className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                      lead.temperature === 'chaud'
+                        ? 'bg-red-500/15 text-red-300 border-red-500/30'
+                        : 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+                    }`}
+                  >
+                    {lead.temperature === 'chaud' ? '🔥 Chaud' : '❄️ Froid'}
+                  </button>
                 </div>
                 <p className="text-sm text-[#f4efe4]/60 truncate">{lead.email}</p>
-                <p className="text-xs text-[#f4efe4]/40 mt-1">{new Date(lead.created_at).toLocaleString('fr-FR')}</p>
+                <p className="text-xs text-[#f4efe4]/40 mt-1">
+                  {new Date(lead.created_at).toLocaleString('fr-FR')}
+                  {' · '}Relances : {lead.relance_count || 0}/{SEQUENCE_LENGTH}
+                </p>
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); cycleStatus(lead) }}
@@ -193,16 +228,28 @@ export default function AdminLeadsPage() {
               {selected.formule && <p><span className="text-[#f4efe4]/50">Formule :</span> {selected.formule}</p>}
               {selected.whatsapp && <p><span className="text-[#f4efe4]/50">WhatsApp :</span> {selected.whatsapp}</p>}
               <p><span className="text-[#f4efe4]/50">Date :</span> {new Date(selected.created_at).toLocaleString('fr-FR')}</p>
+              <p><span className="text-[#f4efe4]/50">Relances envoyées :</span> {selected.relance_count || 0}/{SEQUENCE_LENGTH}</p>
               {selected.message && <p className="whitespace-pre-wrap"><span className="text-[#f4efe4]/50">Message :</span> {selected.message}</p>}
             </div>
 
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
               <span className="text-sm text-[#f4efe4]/50">Statut :</span>
               <button
                 onClick={() => cycleStatus(selected)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${STATUS_STYLES[selected.status || 'nouveau']}`}
               >
                 {STATUS_LABELS[selected.status || 'nouveau']}
+              </button>
+              <span className="text-sm text-[#f4efe4]/50 ml-2">Température :</span>
+              <button
+                onClick={() => toggleTemperature(selected)}
+                className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                  selected.temperature === 'chaud'
+                    ? 'bg-red-500/15 text-red-300 border-red-500/30'
+                    : 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+                }`}
+              >
+                {selected.temperature === 'chaud' ? '🔥 Chaud' : '❄️ Froid'}
               </button>
             </div>
 

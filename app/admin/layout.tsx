@@ -12,6 +12,7 @@ const NAV = [
   { href: '/admin/contents?type=bon_plan', label: 'Bons plans', icon: '📍' },
   { href: '/admin/contents?type=transfert', label: 'Transferts', icon: '🚗' },
   { href: '/admin/emails', label: 'Relances email', icon: '📧' },
+  { href: '/admin/textes', label: 'Textes du site', icon: '✏️' },
   { href: '/admin/settings', label: 'Réglages', icon: '⚙️' },
 ]
 

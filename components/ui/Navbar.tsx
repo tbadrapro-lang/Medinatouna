@@ -73,6 +73,10 @@ export default function Navbar() {
             </span>
           </Link>
 
+          <span className="hidden sm:flex items-center gap-1.5 text-xs text-gold/70 tracking-widest uppercase border border-gold/20 rounded-full px-3 py-1">
+            Vision 2030
+          </span>
+
           <nav
             className="hidden md:flex items-center gap-1 rounded-full px-1.5 py-1.5 border"
             style={{ background: 'rgba(18, 48, 30, 0.8)', borderColor: 'rgba(196, 154, 60, 0.2)' }}

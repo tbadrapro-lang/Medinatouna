@@ -135,14 +135,19 @@ export default function Camp({ packs }: { packs?: ContentItem[] }) {
     }
   }
 
+  if (!CONFIG.visible.camp) return null
+
   return (
     <section id="camp" className="relative py-20 md:py-28 px-5 md:px-10 bg-void">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="section-label justify-center">Expérience désert</span>
           <h2 className="font-display text-4xl md:text-5xl font-semibold mt-4">
-            Le camp bédouin
+            {CONFIG.texts.camp_titre}
           </h2>
+          <p className="font-body text-ivory/70 leading-relaxed max-w-2xl mx-auto mt-4">
+            {CONFIG.texts.camp_description}
+          </p>
         </div>
 
         {/* Carousel */}

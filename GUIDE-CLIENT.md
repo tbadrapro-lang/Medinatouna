@@ -6,7 +6,7 @@ Ce guide explique simplement comment utiliser votre tableau de bord (dashboard) 
 
 1. Allez sur `https://lesbonsplansdarabie.com/admin/login`
 2. Entrez votre mot de passe administrateur
-3. Vous arrivez sur le tableau de bord avec le menu : Contenus, Mes clients, Relances email, Réglages
+3. Vous arrivez sur le tableau de bord avec le menu : Contenus, Mes clients, Relances email, Textes du site, Réglages
 
 Votre session reste active 7 jours, ensuite il faudra vous reconnecter.
 
@@ -46,17 +46,48 @@ Astuce : vous pouvez réorganiser l'ordre d'affichage avec le champ "Ordre" (les
 6. Cliquez sur un client pour ouvrir sa fiche détaillée : vous pouvez y ajouter des notes (sauvegardées automatiquement) et le contacter en un clic via **WhatsApp** ou **Email**
 7. Le bouton **⬇️ Exporter CSV** en haut télécharge la liste complète de vos clients dans un fichier Excel
 
-## 5. Envoyer une relance email
+### Température des leads (🔥 chaud / ❄️ froid)
+
+Chaque client reçoit automatiquement une "température" selon son profil :
+- **🔥 Chaud** : il a montré une vraie intention d'achat (institut ou camp bédouin, avec un numéro WhatsApp ou une formule choisie)
+- **❄️ Froid** : simple curieux, guide gratuit, liste d'attente, ou sans WhatsApp
+
+- Le badge 🔥/❄️ est cliquable : vous pouvez le changer manuellement si vous estimez qu'un client est en fait plus (ou moins) intéressé
+- Utilisez le filtre **Température** en haut de la page pour ne voir que les chauds ou les froids
+- À côté de la date, vous voyez "**Relances : X/3**" : cela indique où en est ce client dans sa séquence de relance email
+
+## 5. Envoyer une relance email (chauds vs froids)
 
 1. Cliquez sur **Relances email**
-2. Choisissez un modèle de message parmi les 3 proposés (Relance douce, Dernières places, Nouveauté), vous pouvez modifier le texte et l'objet
-3. Sélectionnez les destinataires avec les filtres (service, statut)
-4. Vérifiez l'aperçu en bas
-5. Cliquez sur **Envoyer à X personne(s)** puis confirmez
+2. En haut, choisissez l'onglet :
+   - **🔥 Leads chauds** : séquence de closing (J+1 "Votre place vous attend", J+3 "Dernières places", J+7 "On vous accompagne") — pour les personnes prêtes à réserver
+   - **❄️ Leads froids** : séquence de nurturing (J+3 "Votre bon plan + bonus", J+10 "L'expérience en images", J+21 "Offre découverte") — pour entretenir la relation sans pression
+3. Choisissez le modèle de message (vous pouvez modifier le texte et l'objet)
+4. La liste des destinataires est automatiquement filtrée selon la température de l'onglet ; affinez avec les filtres service/statut si besoin
+5. Vérifiez l'aperçu en bas
+6. Cliquez sur **Envoyer à X personne(s)** puis confirmez
 
-⚠️ Pour éviter de spammer vos clients, une même personne ne peut pas recevoir plus d'un email tous les 3 jours.
+⚠️ Pour éviter de spammer vos clients, une même personne ne peut pas recevoir plus d'un email tous les 3 jours. Chaque envoi augmente automatiquement le compteur "Relances : X/3" visible dans Mes clients.
 
-## 6. Réglages du site
+## 6. Modifier les textes du site
+
+1. Cliquez sur **✏️ Textes du site**
+2. Cliquez sur une section pour l'ouvrir : Hero, Institut, Camp, Vision 2030, E-books, Transferts, Miel & Scooter
+3. Modifiez les textes dans les champs (titres, descriptions...)
+4. Pour le Hero, vous pouvez aussi choisir l'**image de fond** dans la liste déroulante
+5. Cliquez sur **Enregistrer** en bas de chaque section
+
+Les modifications apparaissent sur le site en environ 1 minute. Si un champ est laissé vide, le site affiche automatiquement le texte d'origine (jamais de vide).
+
+## 7. Masquer / afficher une section du site
+
+Dans **✏️ Textes du site**, chaque section a une case **"Afficher cette section sur le site"** :
+- Cochée → la section est visible sur le site public
+- Décochée → la section disparaît du site (utile pour cacher temporairement une offre)
+
+N'oubliez pas de cliquer sur **Enregistrer** après avoir changé la case.
+
+## 8. Réglages du site
 
 Dans **Réglages**, vous pouvez modifier sans toucher au code :
 - Le numéro WhatsApp principal et celui du camp bédouin
@@ -65,7 +96,7 @@ Dans **Réglages**, vous pouvez modifier sans toucher au code :
 
 Tapez la nouvelle valeur puis cliquez sur **Enregistrer**. Le site utilise automatiquement ces nouvelles informations.
 
-## 7. En cas de problème
+## 9. En cas de problème
 
 - Pour toute question sur le contenu, les prix ou les clients : contactez **Badra**
 - Pour tout problème technique (site qui ne fonctionne pas, bug, dashboard inaccessible) : contactez **Proxia IA**

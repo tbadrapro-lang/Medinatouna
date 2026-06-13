@@ -5,6 +5,7 @@ import { useConfig } from '@/components/ConfigProvider'
 
 export default function MielScooter() {
   const CONFIG = useConfig()
+  if (!CONFIG.visible.mielscooter) return null
   const MIEL_WA = waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite commander du miel authentique de Médine. Pouvez-vous m'indiquer les variétés disponibles, les tarifs et les modalités de livraison en France ? Merci.")
   const SCOOTER_WA = waLink(CONFIG.WHATSAPP_FR, "Bonjour, je souhaite réserver un e-scooter à Médine pour mon séjour. Pouvez-vous m'indiquer les dates disponibles et les conditions de location ? Merci.")
   return (

@@ -5,11 +5,13 @@ export async function GET(req: NextRequest) {
   const service = req.nextUrl.searchParams.get('service')
   const statut = req.nextUrl.searchParams.get('statut')
   const search = req.nextUrl.searchParams.get('search')
+  const temperature = req.nextUrl.searchParams.get('temperature')
 
   let query = supabaseAdmin.from('leads').select('*').order('created_at', { ascending: false })
 
   if (service && service !== 'tous') query = query.eq('service', service)
   if (statut && statut !== 'tous') query = query.eq('status', statut)
+  if (temperature && temperature !== 'tous') query = query.eq('temperature', temperature)
   if (search) query = query.or(`nom.ilike.%${search}%,email.ilike.%${search}%`)
 
   const { data, error } = await query
@@ -19,13 +21,14 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const body = await req.json()
-  const { id, status, notes } = body
+  const { id, status, notes, temperature } = body
 
   if (!id) return NextResponse.json({ error: 'id requis' }, { status: 400 })
 
   const update: Record<string, unknown> = {}
   if (status !== undefined) update.status = status
   if (notes !== undefined) update.notes = notes
+  if (temperature !== undefined) update.temperature = temperature
 
   const { error } = await supabaseAdmin.from('leads').update(update).eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

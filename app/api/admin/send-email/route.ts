@@ -31,7 +31,7 @@ function buildHtml(nom: string, message: string) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { leadIds, message, subject } = body as { leadIds: string[]; message: string; subject: string }
+  const { leadIds, message, subject, relanceType } = body as { leadIds: string[]; message: string; subject: string; relanceType?: string }
 
   if (!Array.isArray(leadIds) || leadIds.length === 0) {
     return NextResponse.json({ error: 'Aucun destinataire sélectionné' }, { status: 400 })
@@ -91,7 +91,11 @@ export async function POST(req: NextRequest) {
 
       if (res.ok) {
         sent++
-        await supabaseAdmin.from('leads').update({ last_email_sent: new Date().toISOString() }).eq('id', lead.id)
+        await supabaseAdmin.from('leads').update({
+          last_email_sent: new Date().toISOString(),
+          relance_count: (lead.relance_count || 0) + 1,
+          last_relance_type: relanceType || null,
+        }).eq('id', lead.id)
       } else {
         errors.push(lead.email)
       }

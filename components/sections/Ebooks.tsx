@@ -177,6 +177,8 @@ export default function Ebooks({ ebooks }: { ebooks?: ContentItem[] }) {
     }
   }
 
+  if (!CONFIG.visible.ebooks) return null
+
   return (
     <section id="ebooks" className="relative py-20 md:py-28 px-5 md:px-10 bg-deep">
       <div className="max-w-7xl mx-auto">
